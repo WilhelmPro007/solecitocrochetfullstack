@@ -1,17 +1,15 @@
 'use client';
 
-import { useSession, signIn, signOut } from 'next-auth/react'
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function Dashboard() {
-  const session = useSession();
-  const data = session?.data;
-  const status = session?.status;
+  const { data, status } = useSession();
 
   if (status === 'loading') {
-    return <p>Cargando...</p>
+    return <p>Cargando...</p>;
   }
 
-  if (!session) {
+  if (!data || !data.user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <p>Debes iniciar sesión para ver esta página</p>
@@ -22,13 +20,13 @@ export default function Dashboard() {
           Iniciar sesión
         </button>
       </div>
-    )
+    );
   }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Bienvenido, {data?.user?.name}</h1>
-      <p>{data?.user?.email}</p>
+      <h1 className="text-2xl font-bold">Bienvenido, {data.user.name}</h1>
+      <p>{data.user.email}</p>
       <button
         onClick={() => signOut()}
         className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -36,5 +34,5 @@ export default function Dashboard() {
         Cerrar sesión
       </button>
     </div>
-  )
+  );
 }

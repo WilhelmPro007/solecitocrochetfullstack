@@ -1,8 +1,14 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function LandingNavbar() {
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
+
   return (
     <>
       {/* Header */}
@@ -23,12 +29,30 @@ export default function LandingNavbar() {
           <Link href="#contacto" className="hover:text-gray-500">Contacto</Link>
         </nav>
         <div className="flex items-center gap-4">
-          <a
-            href="login"
-            className="text-sm font-medium hover:underline hidden md:inline"
-          >
-            Iniciar sesión
-          </a>
+          {!session && !isLoading && (
+            <Link
+              href="/login"
+              className="text-sm font-medium hover:underline hidden md:inline"
+            >
+              Iniciar sesión
+            </Link>
+          )}
+          {session && (
+            <div className="flex items-center gap-4">
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium hover:underline hidden md:inline"
+              >
+                Mi cuenta
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="text-sm font-medium hover:underline hidden md:inline"
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          )}
           <button className="rounded-md bg-pink-600 text-white text-sm font-medium px-4 py-2 hover:bg-pink-700 transition-colors">
             Carrito
           </button>
