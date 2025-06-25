@@ -24,7 +24,7 @@ export default function LandingNavbar() {
         </nav>
         <div className="flex items-center gap-4">
           <a
-            href="#login"
+            href="login"
             className="text-sm font-medium hover:underline hidden md:inline"
           >
             Iniciar sesión

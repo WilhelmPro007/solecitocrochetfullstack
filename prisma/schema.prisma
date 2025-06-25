@@ -18,10 +18,11 @@ datasource db {
 model User {
   id            String   @id @default(uuid())
   name          String?
-  email         String?  @unique
+  email         String  @unique
   emailVerified DateTime?
   image         String?
-  role          String   @default("user")
+  role          String   @default("cliente")
+  password      String   // Campo para almacenar el hash de la contraseña
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
