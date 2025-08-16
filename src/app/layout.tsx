@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/providers/SessionProvider";
+import MyMelodyNavbar from "@/components/navbar/MyMelodyNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 
 // Exportar metadata en un componente separado para evitar conflictos con 'use client'
 const metadata: Metadata = {
-  title: "Ecommerce",
-  description: "Ecommerce application built with Next.js and Tailwind CSS",
+  title: "Solecito Crochet - Tienda de Productos Tejidos",
+  description: "Descubre nuestra hermosa colección de productos tejidos a mano con amor",
 };
 
 // Exportar metadatos como una constante separada
@@ -28,9 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
+          <MyMelodyNavbar />
           {children}
         </SessionProvider>
       </body>

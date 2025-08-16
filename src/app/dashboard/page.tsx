@@ -52,39 +52,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-      {/* Header */}
-      <header className="bg-white border-b border-pink-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="inline-flex items-center justify-center w-8 h-8 bg-pink-200 rounded-full">
-                <span className="text-sm">🎀</span>
-              </div>
-              <h1 className="text-lg font-semibold text-gray-900">
-                Solecito Crochet
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                Hola, <span className="font-medium text-gray-900">{data.user.name}</span>
-              </div>
-              <button
-                onClick={() => signOut()}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-              >
-                Cerrar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            ¡Bienvenida de vuelta! 💕
+            ¡Bienvenida de vuelta, {data.user.name}! 💕
           </h2>
           <p className="text-gray-600">
             Aquí puedes gestionar tu cuenta y ver tu actividad en Solecito Crochet
