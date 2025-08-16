@@ -9,8 +9,8 @@ import Contact from "@/components/landing/contact";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-50 text-gray-900 dark:text-gray-800">
-      
+    <div className="min-h-screen bg-white dark:bg-gray-50 text-gray-900 dark:text-gray-900">
+
       {/* Hero Section */}
       <LandingHero />
 

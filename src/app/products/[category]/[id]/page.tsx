@@ -76,19 +76,8 @@ export default function ProductDetailPage() {
   };
 
   const trackClick = async (clickType: string) => {
-    if (!params.id) return;
-    
-    try {
-      await fetch(`/api/products/${params.id}/track`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ clickType })
-      });
-    } catch (error) {
-      console.error('Error tracking click:', error);
-    }
+    // Tracking temporalmente deshabilitado mientras arreglamos las APIs
+    console.log('Track click:', clickType, 'for product:', params.id);
   };
 
   const shareOnWhatsApp = () => {
@@ -117,7 +106,7 @@ export default function ProductDetailPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-gray-600">Cargando producto...</p>
+          <p className="text-gray-900">Cargando producto...</p>
         </div>
       </div>
     );
@@ -131,7 +120,7 @@ export default function ProductDetailPage() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Producto no encontrado
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-900 mb-6">
             {error || 'El producto que buscas no existe o ha sido eliminado'}
           </p>
           <Link
@@ -208,31 +197,31 @@ export default function ProductDetailPage() {
           <nav className="mb-8">
             <ol className="flex items-center space-x-2 text-sm">
               <li>
-                <Link href="/" className="text-gray-500 hover:text-pink-600 transition-colors">
+                <Link href="/" className="text-gray-900 hover:text-pink-600 transition-colors">
                   Inicio
                 </Link>
               </li>
               <li>
-                <span className="text-gray-400">›</span>
+                <span className="text-gray-900">›</span>
               </li>
               <li>
-                <Link href="/products" className="text-gray-500 hover:text-pink-600 transition-colors">
+                <Link href="/products" className="text-gray-900 hover:text-pink-600 transition-colors">
                   Catálogo
                 </Link>
               </li>
               <li>
-                <span className="text-gray-400">›</span>
+                <span className="text-gray-900">›</span>
               </li>
               <li>
                 <Link 
                   href={`/products?category=${product.category}`} 
-                  className="text-gray-500 hover:text-pink-600 transition-colors capitalize"
+                  className="text-gray-900 hover:text-pink-600 transition-colors capitalize"
                 >
                   {product.category}
                 </Link>
               </li>
               <li>
-                <span className="text-gray-400">›</span>
+                <span className="text-gray-900">›</span>
               </li>
               <li className="text-gray-900 font-medium truncate">
                 {product.name}
@@ -308,7 +297,7 @@ export default function ProductDetailPage() {
             {/* Product Info Section */}
             <div className="space-y-6">
               {/* Header */}
-              <div>
+    <div>
                 <div className="flex items-start justify-between mb-4">
                   <h1 className="text-3xl font-bold text-gray-900">
                     {product.name}
@@ -319,7 +308,7 @@ export default function ProductDetailPage() {
                 </div>
                 
                 {product.description && (
-                  <p className="text-gray-600 text-lg leading-relaxed">
+                  <p className="text-gray-900 text-lg leading-relaxed">
                     {product.description}
                   </p>
                 )}
@@ -328,12 +317,12 @@ export default function ProductDetailPage() {
               {/* Product Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-lg border border-pink-100">
-                  <span className="text-sm font-medium text-gray-500">Categoría</span>
+                  <span className="text-sm font-medium text-gray-900">Categoría</span>
                   <p className="text-gray-900 capitalize">{product.category}</p>
                 </div>
                 
                 <div className="bg-white p-4 rounded-lg border border-pink-100">
-                  <span className="text-sm font-medium text-gray-500">Stock</span>
+                  <span className="text-sm font-medium text-gray-900">Stock</span>
                   <p className={`font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {product.stock > 0 ? `${product.stock} disponibles` : 'Agotado'}
                   </p>
@@ -341,21 +330,21 @@ export default function ProductDetailPage() {
 
                 {product.materials && (
                   <div className="bg-white p-4 rounded-lg border border-pink-100">
-                    <span className="text-sm font-medium text-gray-500">Materiales</span>
+                    <span className="text-sm font-medium text-gray-900">Materiales</span>
                     <p className="text-gray-900">{product.materials}</p>
                   </div>
                 )}
 
                 {product.dimensions && (
                   <div className="bg-white p-4 rounded-lg border border-pink-100">
-                    <span className="text-sm font-medium text-gray-500">Dimensiones</span>
+                    <span className="text-sm font-medium text-gray-900">Dimensiones</span>
                     <p className="text-gray-900">{product.dimensions}</p>
                   </div>
                 )}
 
                 {product.weight && (
                   <div className="bg-white p-4 rounded-lg border border-pink-100">
-                    <span className="text-sm font-medium text-gray-500">Peso</span>
+                    <span className="text-sm font-medium text-gray-900">Peso</span>
                     <p className="text-gray-900">{product.weight}</p>
                   </div>
                 )}
@@ -389,7 +378,7 @@ export default function ProductDetailPage() {
                     className={`font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2 ${
                       isFavorite
                         ? 'bg-pink-100 text-pink-700 hover:bg-pink-200'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                     }`}
                   >
                     <span>{isFavorite ? '💖' : '🤍'}</span>
@@ -419,7 +408,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
-      </div>
+    </div>
     </>
   );
 }

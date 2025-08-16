@@ -54,7 +54,7 @@ export default function RegisterPage() {
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
             Crear Cuenta
           </h1>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-900 text-sm">
             Únete a la familia Solecito Crochet
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function RegisterPage() {
         <div className="bg-white rounded-lg border border-pink-100 shadow-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
                 Nombre completo
               </label>
               <input
@@ -79,7 +79,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                 Correo electrónico
               </label>
               <input
@@ -95,7 +95,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
                 Contraseña
               </label>
               <input
@@ -111,7 +111,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
                 Confirmar contraseña
               </label>
               <input
@@ -158,7 +158,7 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-900">
               ¿Ya tienes una cuenta?{" "}
               <Link 
                 href="/login" 
@@ -172,7 +172,7 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-900">
             © 2024 Solecito Crochet. Hecho con 💕
           </p>
         </div>

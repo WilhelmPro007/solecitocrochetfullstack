@@ -8,11 +8,12 @@ const prisma = new PrismaClient();
 // GET - Obtener un producto específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         images: {
           orderBy: { order: 'asc' }
@@ -43,9 +44,10 @@ export async function GET(
 // PUT - Actualizar producto
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session || !session.user) {
@@ -85,7 +87,7 @@ export async function PUT(
 
     // Actualizar el producto
     const product = await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name,
         description,
@@ -110,13 +112,13 @@ export async function PUT(
     if (images && Array.isArray(images)) {
       // Eliminar imágenes existentes
       await prisma.productImage.deleteMany({
-        where: { productId: params.id }
+        where: { productId: id }
       });
 
       // Crear nuevas imágenes
       await prisma.productImage.createMany({
         data: images.map((img: any, index: number) => ({
-          productId: params.id,
+          productId: id,
           url: img.url,
           altText: img.altText || name,
           isMain: index === 0,
@@ -127,7 +129,7 @@ export async function PUT(
 
     // Obtener el producto actualizado con imágenes
     const updatedProduct = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         images: {
           orderBy: { order: 'asc' }
@@ -151,9 +153,10 @@ export async function PUT(
 // DELETE - Soft delete producto
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     
     if (!session || !session.user) {
@@ -178,7 +181,7 @@ export async function DELETE(
 
     // Soft delete - solo marcar como inactivo
     const product = await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data: { isActive: false },
       include: {
         images: true,

@@ -11,7 +11,7 @@ export class RegisterUser {
 async execute({ name, email, password, confirmPassword, role }: RegisterUserDTO){
     if (!email || !password || !role) throw new Error("Email, password y role son requeridos.");
     if (password !== confirmPassword) throw new Error("Las contraseñas no coinciden.");
-    if (role !== "cliente") throw new Error("El rol solo puede ser cliente.");
+    if (role !== "CLIENTE") throw new Error("El rol solo puede ser cliente.");
     const existing = await this.userRepo.findByEmail(email);
     if (existing) throw new Error("El usuario ya existe.");
     const hashed = await hashPassword(password);

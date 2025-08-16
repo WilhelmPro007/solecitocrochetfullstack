@@ -23,10 +23,10 @@ export default function LandingNavbar() {
           <span className="font-semibold text-lg">Manos de Lana</span>
         </div>
         <nav className="space-x-6 text-sm font-medium hidden md:flex">
-          <Link href="/" className="hover:text-gray-500">Inicio</Link>
-          <Link href="/products" className="hover:text-gray-500">Catálogo</Link>
-          <Link href="#testimonios" className="hover:text-gray-500">Testimonios</Link>
-          <Link href="#contacto" className="hover:text-gray-500">Contacto</Link>
+          <Link href="/" className="hover:text-gray-900">Inicio</Link>
+          <Link href="/products" className="hover:text-gray-900">Catálogo</Link>
+          <Link href="#testimonios" className="hover:text-gray-900">Testimonios</Link>
+          <Link href="#contacto" className="hover:text-gray-900">Contacto</Link>
         </nav>
         <div className="flex items-center gap-4">
           {!session && !isLoading && (

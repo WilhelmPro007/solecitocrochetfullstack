@@ -7,7 +7,7 @@ export default function LandingHero() {
         <h1 className="text-4xl sm:text-5xl font-bold leading-tight tracking-tight">
           Hecho con amor, <br />a mano y con lana.
         </h1>
-        <p className="mt-6 text-lg text-gray-600 dark:text-gray-500 max-w-xl mx-auto">
+        <p className="mt-6 text-lg text-gray-900 dark:text-gray-900 max-w-xl mx-auto">
           Encuentra piezas únicas hechas en crochet por artesanos talentosos. 
           Cada producto es único, como tú.
         </p>

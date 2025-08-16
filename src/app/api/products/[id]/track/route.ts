@@ -6,9 +6,10 @@ const prisma = new PrismaClient();
 // POST - Trackear click en producto
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { clickType = 'view' } = await request.json();
     const userAgent = request.headers.get('user-agent') || '';
     const forwardedFor = request.headers.get('x-forwarded-for');
@@ -25,7 +26,7 @@ export async function POST(
 
     // Verificar que el producto existe
     const product = await prisma.product.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!product) {
@@ -38,7 +39,7 @@ export async function POST(
     // Registrar el click
     await prisma.productClick.create({
       data: {
-        productId: params.id,
+        productId: id,
         clickType,
         userAgent,
         ipAddress,
@@ -53,7 +54,7 @@ export async function POST(
 
     // Actualizar o crear métricas de popularidad
     await prisma.popularityMetric.upsert({
-      where: { productId: params.id },
+      where: { productId: id },
       update: {
         totalClicks: { increment: 1 },
         weeklyClicks: { increment: 1 },
@@ -65,7 +66,7 @@ export async function POST(
         lastCalculated: now
       },
       create: {
-        productId: params.id,
+        productId: id,
         totalClicks: 1,
         weeklyClicks: 1,
         monthlyClicks: 1,
@@ -80,7 +81,7 @@ export async function POST(
 
     // Calcular nuevo score de popularidad
     const metrics = await prisma.popularityMetric.findUnique({
-      where: { productId: params.id }
+      where: { productId: id }
     });
 
     if (metrics) {
@@ -92,7 +93,7 @@ export async function POST(
         (metrics.favoriteClicks * 1.5);
 
       await prisma.popularityMetric.update({
-        where: { productId: params.id },
+        where: { productId: id },
         data: { popularityScore }
       });
     }

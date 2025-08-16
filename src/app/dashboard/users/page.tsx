@@ -15,7 +15,7 @@ export default function UsersManagementPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-gray-600">Cargando...</p>
+          <p className="text-gray-900">Cargando...</p>
         </div>
       </div>
     );
@@ -29,7 +29,7 @@ export default function UsersManagementPage() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Acceso Denegado
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Solo los administradores pueden acceder a esta página
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function UsersManagementPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Gestión de Usuarios 👥
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-900">
           Información sobre roles y permisos en Solecito Crochet
         </p>
       </div>
@@ -98,20 +98,20 @@ export default function UsersManagementPage() {
           </span>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Tu Rol Actual</h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-900">
               Rol: <span className="font-medium text-pink-600">{userRole}</span>
             </p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="flex items-center space-x-2">
-            <span className={hasAdminAccess ? 'text-green-600' : 'text-gray-400'}>
+            <span className={hasAdminAccess ? 'text-green-600' : 'text-gray-900'}>
               {hasAdminAccess ? '✅' : '❌'}
             </span>
             <span>Acceso de Administrador</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className={isSuperAdmin ? 'text-green-600' : 'text-gray-400'}>
+            <span className={isSuperAdmin ? 'text-green-600' : 'text-gray-900'}>
               {isSuperAdmin ? '✅' : '❌'}
             </span>
             <span>Acceso de Super Admin</span>
@@ -179,7 +179,7 @@ export default function UsersManagementPage() {
                     }`}>
                       •
                     </span>
-                    <span className="text-gray-700">{permission}</span>
+                    <span className="text-gray-900">{permission}</span>
                   </li>
                 ))}
               </ul>
@@ -195,21 +195,21 @@ export default function UsersManagementPage() {
             <span className="text-2xl">👑</span>
             <h3 className="text-lg font-semibold text-gray-900">Herramientas de Super Admin</h3>
           </div>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-900 mb-4">
             Como Super Administrador, tienes acceso a herramientas avanzadas de gestión
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
               <span className="text-xl">👥</span>
-              <span className="font-medium text-gray-700">Gestionar Roles</span>
+              <span className="font-medium text-gray-900">Gestionar Roles</span>
             </button>
             <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
               <span className="text-xl">⚙️</span>
-              <span className="font-medium text-gray-700">Configuración Sistema</span>
+              <span className="font-medium text-gray-900">Configuración Sistema</span>
             </button>
             <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
               <span className="text-xl">📊</span>
-              <span className="font-medium text-gray-700">Analíticas Avanzadas</span>
+              <span className="font-medium text-gray-900">Analíticas Avanzadas</span>
             </button>
           </div>
         </div>

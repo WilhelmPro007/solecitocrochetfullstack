@@ -7,7 +7,7 @@ export default function Contact() {
     
     <section id="contacto" className="px-6 pb-24 text-center">
         <h2 className="text-2xl font-semibold mb-6">Contáctanos</h2>
-        <p className="text-gray-600 dark:text-gray-500 max-w-md mx-auto mb-8">
+        <p className="text-gray-900 dark:text-gray-900 max-w-md mx-auto mb-8">
           ¿Tienes preguntas o necesitas ayuda con tu pedido? Escríbenos o contáctanos por WhatsApp.
         </p>
 
@@ -16,7 +16,7 @@ export default function Contact() {
           {/* Formulario de contacto */}
           <form className="bg-white dark:bg-gray-100 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-300">
             <div className="mb-4">
-              <label htmlFor="name" className="block text-left text-sm font-medium text-gray-700 dark:text-gray-600 mb-1">
+              <label htmlFor="name" className="block text-left text-sm font-medium text-gray-900 dark:text-gray-900 mb-1">
                 Nombre
               </label>
               <input
@@ -30,7 +30,7 @@ export default function Contact() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="email" className="block text-left text-sm font-medium text-gray-700 dark:text-gray-600 mb-1">
+              <label htmlFor="email" className="block text-left text-sm font-medium text-gray-900 dark:text-gray-900 mb-1">
                 Correo electrónico
               </label>
               <input
@@ -44,7 +44,7 @@ export default function Contact() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="message" className="block text-left text-sm font-medium text-gray-700 dark:text-gray-600 mb-1">
+              <label htmlFor="message" className="block text-left text-sm font-medium text-gray-900 dark:text-gray-900 mb-1">
                 Mensaje
               </label>
               <textarea
@@ -88,7 +88,7 @@ export default function Contact() {
               Chatea con nosotros
             </Link>
 
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-600">
+            <p className="mt-4 text-sm text-gray-900 dark:text-gray-900">
               Responderemos lo antes posible 💬
             </p>
           </div>

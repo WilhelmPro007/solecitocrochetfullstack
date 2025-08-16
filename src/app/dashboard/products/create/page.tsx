@@ -129,7 +129,7 @@ export default function CreateProductPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-gray-600">Cargando...</p>
+          <p className="text-gray-900">Cargando...</p>
         </div>
       </div>
     );
@@ -143,7 +143,7 @@ export default function CreateProductPage() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Acceso Denegado
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Solo los administradores pueden acceder a esta página
           </p>
         </div>
@@ -152,14 +152,13 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Crear Nuevo Producto ➕
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Agrega un nuevo producto al catálogo de Solecito Crochet
           </p>
         </div>
@@ -181,7 +180,7 @@ export default function CreateProductPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
                     Nombre del Producto *
                   </label>
                   <input
@@ -190,13 +189,14 @@ export default function CreateProductPage() {
                     name="name"
                     value={form.name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    placeholder="Nombre del producto"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-900 mb-2">
                     Precio *
                   </label>
                   <input
@@ -207,13 +207,14 @@ export default function CreateProductPage() {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    placeholder="Precio del producto"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-900 mb-2">
                     Categoría *
                   </label>
                   <select
@@ -221,7 +222,7 @@ export default function CreateProductPage() {
                     name="category"
                     value={form.category}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                     required
                   >
                     {categories.map(cat => (
@@ -233,7 +234,7 @@ export default function CreateProductPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="stock" className="block text-sm font-medium text-gray-900 mb-2">
                     Stock
                   </label>
                   <input
@@ -243,13 +244,13 @@ export default function CreateProductPage() {
                     value={form.stock}
                     onChange={handleInputChange}
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                   />
                 </div>
               </div>
 
               <div className="mt-4">
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
                   Descripción
                 </label>
                 <textarea
@@ -258,7 +259,7 @@ export default function CreateProductPage() {
                   value={form.description}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                  className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                   placeholder="Describe tu producto..."
                 />
               </div>
@@ -270,9 +271,9 @@ export default function CreateProductPage() {
                     name="featured"
                     checked={form.featured}
                     onChange={handleInputChange}
-                    className="rounded border-gray-300 text-pink-600 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
+                    className=" rounded border-gray-300 text-pink-600 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
                   />
-                  <span className="ml-2 text-sm text-gray-700">
+                  <span className="ml-2 text-sm text-gray-900">
                     Marcar como producto destacado
                   </span>
                 </label>
@@ -287,7 +288,7 @@ export default function CreateProductPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="materials" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="materials" className="block text-sm font-medium text-gray-900 mb-2">
                     Materiales
                   </label>
                   <input
@@ -296,13 +297,13 @@ export default function CreateProductPage() {
                     name="materials"
                     value={form.materials}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                     placeholder="Ej: Algodón 100%, Lana merino..."
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="dimensions" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="dimensions" className="block text-sm font-medium text-gray-900 mb-2">
                     Dimensiones
                   </label>
                   <input
@@ -311,13 +312,13 @@ export default function CreateProductPage() {
                     name="dimensions"
                     value={form.dimensions}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                     placeholder="Ej: 20cm x 15cm x 10cm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="weight" className="block text-sm font-medium text-gray-900 mb-2">
                     Peso
                   </label>
                   <input
@@ -326,14 +327,14 @@ export default function CreateProductPage() {
                     name="weight"
                     value={form.weight}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                    className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                     placeholder="Ej: 150g"
                   />
                 </div>
               </div>
 
               <div className="mt-4">
-                <label htmlFor="careInstructions" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="careInstructions" className="block text-sm font-medium text-gray-900 mb-2">
                   Instrucciones de Cuidado
                 </label>
                 <textarea
@@ -342,7 +343,7 @@ export default function CreateProductPage() {
                   value={form.careInstructions}
                   onChange={handleInputChange}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                  className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                   placeholder="Ej: Lavar a mano con agua fría, secar a la sombra..."
                 />
               </div>
@@ -358,27 +359,27 @@ export default function CreateProductPage() {
                 {form.images.map((image, index) => (
                   <div key={index} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-md">
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         URL de Imagen {index + 1} {index === 0 && '(Principal)'}
                       </label>
                       <input
                         type="url"
                         value={image.url}
                         onChange={(e) => handleImageChange(index, 'url', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                        className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                         placeholder="https://ejemplo.com/imagen.jpg"
                       />
                     </div>
                     
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         Texto Alternativo
                       </label>
                       <input
                         type="text"
                         value={image.altText}
                         onChange={(e) => handleImageChange(index, 'altText', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
+                        className="text-gray-600 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300"
                         placeholder="Descripción de la imagen"
                       />
                     </div>
@@ -444,14 +445,13 @@ export default function CreateProductPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-6 rounded-md transition-colors"
+                className="bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-3 px-6 rounded-md transition-colors"
               >
                 Cancelar
               </button>
             </div>
           </form>
         </div>
-      </div>
-    </div>
+    </>
   );
 } 

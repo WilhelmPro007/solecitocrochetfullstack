@@ -16,7 +16,7 @@ export default function Dashboard() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-gray-600">Cargando...</p>
+          <p className="text-gray-900">Cargando...</p>
         </div>
       </div>
     );
@@ -33,7 +33,7 @@ export default function Dashboard() {
             <h1 className="text-2xl font-semibold text-gray-900 mb-2">
               Acceso Restringido
             </h1>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-900 text-sm">
               Debes iniciar sesión para ver esta página
             </p>
           </div>
@@ -52,14 +52,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+    <>
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main>
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             ¡Bienvenida de vuelta, {data.user.name}! 💕
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             Aquí puedes gestionar tu cuenta y ver tu actividad en Solecito Crochet
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function Dashboard() {
               <span className="text-2xl">👑</span>
               <h3 className="text-lg font-semibold text-gray-900">Panel de Administración</h3>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-900 mb-4">
               Gestiona productos y configuraciones de la tienda
             </p>
             <Link
@@ -95,13 +95,13 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-gray-900">Mi Perfil</h3>
             </div>
             <div className="space-y-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-900">
                 <span className="font-medium">Nombre:</span> {data.user.name}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-900">
                 <span className="font-medium">Email:</span> {data.user.email}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-900">
                 <span className="font-medium">Rol:</span> {(data.user as any).role || 'Cliente'}
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function Dashboard() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900">Mis Pedidos</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-900 mb-4">
               Revisa el estado de tus pedidos recientes
             </p>
             <button className="text-pink-500 hover:text-pink-600 font-medium text-sm hover:underline transition-colors">
@@ -131,7 +131,7 @@ export default function Dashboard() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900">Favoritos</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-900 mb-4">
               Productos que más te gustan
             </p>
             <button className="text-pink-500 hover:text-pink-600 font-medium text-sm hover:underline transition-colors">
@@ -146,23 +146,23 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link href="/products" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">🛍️</span>
-              <span className="font-medium text-gray-700">Ver Productos</span>
+              <span className="font-medium text-gray-900">Ver Productos</span>
             </Link>
             <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">🛒</span>
-              <span className="font-medium text-gray-700">Mi Carrito</span>
+              <span className="font-medium text-gray-900">Mi Carrito</span>
             </button>
             <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">📞</span>
-              <span className="font-medium text-gray-700">Contacto</span>
+              <span className="font-medium text-gray-900">Contacto</span>
             </button>
             <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">⚙️</span>
-              <span className="font-medium text-gray-700">Configuración</span>
+              <span className="font-medium text-gray-900">Configuración</span>
             </button>
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }

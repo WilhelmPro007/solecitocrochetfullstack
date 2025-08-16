@@ -49,7 +49,7 @@ export default function MyMelodyNavbar() {
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   isActiveLink(item.href)
                     ? 'bg-pink-50 text-pink-600 border border-pink-200'
-                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                    : 'text-gray-900 hover:text-pink-600 hover:bg-pink-50'
                 }`}
               >
                 <span>{item.icon}</span>
@@ -63,7 +63,7 @@ export default function MyMelodyNavbar() {
             {/* Cart button (always visible) */}
             <Link
               href="/cart"
-              className="relative p-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
+              className="relative p-2 text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
               title="Carrito"
             >
               <span className="text-xl">🛒</span>
@@ -78,7 +78,7 @@ export default function MyMelodyNavbar() {
               <div className="hidden md:flex items-center space-x-3">
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                  className="text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors"
                 >
                   Iniciar Sesión
                 </Link>
@@ -95,14 +95,14 @@ export default function MyMelodyNavbar() {
               <div className="hidden md:flex items-center space-x-3">
                 <Link
                   href="/dashboard"
-                  className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                  className="flex items-center space-x-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors"
                 >
                   <span>👤</span>
                   <span>Mi Cuenta</span>
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                  className="text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors"
                 >
                   Salir
                 </button>
@@ -112,7 +112,7 @@ export default function MyMelodyNavbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
+              className="md:hidden p-2 text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
               aria-label="Abrir menú"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,7 +137,7 @@ export default function MyMelodyNavbar() {
                   className={`flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActiveLink(item.href)
                       ? 'bg-pink-50 text-pink-600 border border-pink-200'
-                      : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50'
+                      : 'text-gray-900 hover:text-pink-600 hover:bg-pink-50'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -151,7 +151,7 @@ export default function MyMelodyNavbar() {
                   <div className="flex flex-col space-y-3">
                     <Link
                       href="/login"
-                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
+                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span>🔐</span>
@@ -172,7 +172,7 @@ export default function MyMelodyNavbar() {
                   <div className="flex flex-col space-y-3">
                     <Link
                       href="/dashboard"
-                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
+                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span>👤</span>
@@ -183,7 +183,7 @@ export default function MyMelodyNavbar() {
                         signOut({ callbackUrl: '/' });
                         setIsMobileMenuOpen(false);
                       }}
-                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors text-left"
+                      className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors text-left"
                     >
                       <span>🚪</span>
                       <span>Salir</span>
