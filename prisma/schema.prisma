@@ -15,13 +15,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  CLIENTE
+  ADMIN
+  SUPERADMIN
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String?
   email         String  @unique
   emailVerified DateTime?
   image         String?
-  role          String   @default("cliente")
+  role          UserRole @default(CLIENTE)
   password      String   // Campo para almacenar el hash de la contraseña
 
   createdAt     DateTime @default(now())
@@ -29,6 +35,7 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+  products      Product[] // Productos creados por el usuario (si es admin)
 }
 
 model Account {
@@ -62,7 +69,87 @@ model Product {
   name        String
   description String?
   price       Float
-  image       String?
+  category    String
+  stock       Int      @default(0)
+  isActive    Boolean  @default(true)  // Para soft delete
+  featured    Boolean  @default(false) // Para productos destacados
+  
+  // Información adicional
+  materials   String?  // Materiales utilizados
+  dimensions  String?  // Dimensiones del producto
+  weight      String?  // Peso del producto
+  careInstructions String? // Instrucciones de cuidado
+  
+  // Relaciones
+  createdBy   String?
+  creator     User?    @relation(fields: [createdBy], references: [id])
+  images      ProductImage[]
+  clicks      ProductClick[]
+  popularity  PopularityMetric?
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  altText   String?
+  isMain    Boolean  @default(false) // Imagen principal del producto
+  order     Int      @default(0)     // Orden de las imágenes
+  
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductClick {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Información del click
+  userAgent String?
+  ipAddress String?
+  referrer  String?
+  clickType String   @default("view") // "view", "whatsapp", "favorite"
+  
+  // Información temporal para analytics
+  year      Int
+  month     Int
+  week      Int
+  day       Int
+  hour      Int
+  
+  createdAt DateTime @default(now())
+  
+  @@index([productId, createdAt])
+  @@index([year, month])
+  @@index([clickType])
+}
+
+model PopularityMetric {
+  id        String   @id @default(uuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Contadores por período
+  totalClicks     Int @default(0)
+  weeklyClicks    Int @default(0)
+  monthlyClicks   Int @default(0)
+  yearlyClicks    Int @default(0)
+  
+  // Contadores por tipo
+  viewClicks      Int @default(0)
+  whatsappClicks  Int @default(0)
+  favoriteClicks  Int @default(0)
+  
+  // Score de popularidad calculado
+  popularityScore Float @default(0)
+  
+  // Última actualización de métricas
+  lastCalculated  DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

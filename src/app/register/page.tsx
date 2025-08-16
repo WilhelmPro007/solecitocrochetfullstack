@@ -31,7 +31,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, role: "cliente" }),
+        body: JSON.stringify({ ...form, role: "CLIENTE" }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al registrar");

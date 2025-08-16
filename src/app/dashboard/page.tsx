@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession, signIn, signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const { data, status } = useSession();
@@ -63,6 +64,26 @@ export default function Dashboard() {
           </p>
         </div>
 
+        {/* Admin Panel for Admins and SuperAdmins */}
+        {((data.user as any)?.role === 'ADMIN' || (data.user as any)?.role === 'SUPERADMIN') && (
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 mb-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <span className="text-2xl">👑</span>
+              <h3 className="text-lg font-semibold text-gray-900">Panel de Administración</h3>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Gestiona productos y configuraciones de la tienda
+            </p>
+            <Link
+              href="/dashboard/products"
+              className="inline-flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+            >
+              <span>🛍️</span>
+              <span>Gestionar Productos</span>
+            </Link>
+          </div>
+        )}
+
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Profile Card */}
@@ -123,10 +144,10 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg border border-pink-100 shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <Link href="/products" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">🛍️</span>
               <span className="font-medium text-gray-700">Ver Productos</span>
-            </button>
+            </Link>
             <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               <span className="text-2xl">🛒</span>
               <span className="font-medium text-gray-700">Mi Carrito</span>
