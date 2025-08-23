@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import ProductCard from '@/components/products/ProductCard';
 
 // app/products/page.tsx
 
@@ -138,97 +138,15 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => {
-              const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
-              
-              return (
-                <div key={product.id} className="bg-white rounded-lg border border-pink-100 shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  {/* Product Image */}
-                  <div className="relative aspect-square">
-                    {mainImage ? (
-                      <Image 
-                        src={mainImage.url} 
-                        alt={mainImage.altText || product.name} 
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y5ZmJmZiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5Y2E5YjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gaW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <span className="text-4xl text-gray-900">📷</span>
-                      </div>
-                    )}
-                    
-                    {/* Favorite Button */}
-                    <button
-                      onClick={() => toggleFavorite(product.id)}
-                      className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
-                      title={favorites.includes(product.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-                    >
-                      <span className="text-lg">
-                        {favorites.includes(product.id) ? '💖' : '🤍'}
-                      </span>
-                    </button>
-
-                    {/* Featured Badge */}
-                    {product.featured && (
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                          ⭐ Destacado
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Stock Badge */}
-                    {product.stock === 0 && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                          Agotado
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-900 mb-3 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-2xl font-bold text-pink-600">
-                        ${product.price}
-                      </span>
-                      <span className="text-xs text-gray-900">
-                        Stock: {product.stock}
-                      </span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="space-y-2">
-                      <Link
-                        href={`/products/${product.category}/${product.id}`}
-                        className="block w-full bg-pink-100 hover:bg-pink-200 text-pink-700 font-medium py-2 px-4 rounded-md transition-colors text-center"
-                      >
-                        Ver Detalles
-                      </Link>
-                      <button
-                        onClick={() => shareOnWhatsApp(product)}
-                        disabled={product.stock === 0}
-                        className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2"
-                      >
-                        <span>📱</span>
-                        <span>{product.stock === 0 ? 'Sin Stock' : 'Comprar por WhatsApp'}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                variant="catalog"
+                onFavoriteToggle={toggleFavorite}
+                isFavorite={favorites.includes(product.id)}
+              />
+            ))}
           </div>
         )}
 

@@ -130,7 +130,7 @@ export default function CreateProductPage() {
         }
       } catch (error) {
         console.error(`Error uploading image ${index}:`, error);
-      }
+    }
     }
     
     return imageResults;
@@ -205,47 +205,47 @@ export default function CreateProductPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Crear Nuevo Producto</h1>
-      
+
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-6 text-pink-600">Información Básica</h2>
-          
+              
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Nombre del Producto *
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleInputChange}
-                required
+                    Nombre del Producto *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleInputChange}
+                    required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
                 placeholder="Ej: Gorro tejido a mano"
-              />
-            </div>
+                  />
+                </div>
 
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Categoría *
-              </label>
-              <select
-                name="category"
-                value={form.category}
-                onChange={handleInputChange}
-                required
+                    Categoría *
+                  </label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleInputChange}
+                    required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900"
-              >
-                {categories.map(cat => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.icon} {cat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                  >
+                    {categories.map(cat => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.icon} {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Precio *
               </label>
@@ -264,47 +264,47 @@ export default function CreateProductPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Stock
-              </label>
-              <input
-                type="number"
-                name="stock"
-                value={form.stock}
-                onChange={handleInputChange}
-                min="0"
+                    Stock
+                  </label>
+                  <input
+                    type="number"
+                    name="stock"
+                    value={form.stock}
+                    onChange={handleInputChange}
+                    min="0"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
                 placeholder="0"
-              />
-            </div>
-          </div>
+                  />
+                </div>
+              </div>
 
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              Descripción
-            </label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleInputChange}
+                  Descripción
+                </label>
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleInputChange}
               rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-              placeholder="Describe tu producto..."
-            />
-          </div>
+                  placeholder="Describe tu producto..."
+                />
+              </div>
 
           <div className="mt-6">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="featured"
-                checked={form.featured}
-                onChange={handleInputChange}
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="featured"
+                    checked={form.featured}
+                    onChange={handleInputChange}
                 className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-              />
+                  />
               <span className="ml-2 text-sm text-gray-900">Producto destacado</span>
-            </label>
-          </div>
-        </div>
+                </label>
+              </div>
+            </div>
 
         {/* Sección de Imágenes */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -380,81 +380,81 @@ export default function CreateProductPage() {
         {/* Información Adicional */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-6 text-pink-600">Información Adicional</h2>
-          
+              
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Materiales
-              </label>
-              <input
-                type="text"
-                name="materials"
-                value={form.materials}
-                onChange={handleInputChange}
+                    Materiales
+                  </label>
+                  <input
+                    type="text"
+                    name="materials"
+                    value={form.materials}
+                    onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
                 placeholder="Ej: Lana, algodón, acrílico"
-              />
-            </div>
+                  />
+                </div>
 
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Dimensiones
-              </label>
-              <input
-                type="text"
-                name="dimensions"
-                value={form.dimensions}
-                onChange={handleInputChange}
+                    Dimensiones
+                  </label>
+                  <input
+                    type="text"
+                    name="dimensions"
+                    value={form.dimensions}
+                    onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
                 placeholder="Ej: 25cm x 30cm"
-              />
-            </div>
+                  />
+                </div>
 
-            <div>
+                <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
-                Peso
-              </label>
-              <input
-                type="text"
-                name="weight"
-                value={form.weight}
-                onChange={handleInputChange}
+                    Peso
+                  </label>
+                  <input
+                    type="text"
+                    name="weight"
+                    value={form.weight}
+                    onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
                 placeholder="Ej: 200g"
-              />
-            </div>
-          </div>
+                  />
+                </div>
+              </div>
 
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              Instrucciones de Cuidado
-            </label>
-            <textarea
-              name="careInstructions"
-              value={form.careInstructions}
-              onChange={handleInputChange}
+                  Instrucciones de Cuidado
+                </label>
+                <textarea
+                  name="careInstructions"
+                  value={form.careInstructions}
+                  onChange={handleInputChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
               placeholder="Ej: Lavar a mano con agua fría..."
-            />
-          </div>
-        </div>
+                />
+              </div>
+            </div>
 
         {/* Error y Botones */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-md p-4">
             <p className="text-red-700">{error}</p>
-          </div>
-        )}
+                      </div>
+                    )}
 
         <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
+              <button
+                type="button"
+                onClick={() => router.back()}
             className="px-6 py-2 border border-gray-300 rounded-md text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          >
-            Cancelar
-          </button>
+              >
+                Cancelar
+              </button>
           <button
             type="submit"
             disabled={loading || uploadingImages}
@@ -462,8 +462,8 @@ export default function CreateProductPage() {
           >
             {loading ? 'Creando producto...' : uploadingImages ? 'Subiendo imágenes...' : 'Crear Producto'}
           </button>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
   );
 } 

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
-import Image from 'next/image';
 import Link from 'next/link';
+import ProductCard from '@/components/products/ProductCard';
 
 interface Product {
   id: string;
@@ -229,90 +229,14 @@ export default function ProductsManagementPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg border border-pink-100 shadow-lg overflow-hidden">
-                {/* Product Image */}
-                <div className="relative aspect-square">
-                  {product.images.length > 0 ? (
-                    <Image
-                      src={product.images.find(img => img.isMain)?.url || product.images[0].url}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                      <span className="text-4xl">📷</span>
-                    </div>
-                  )}
-                  
-                  {/* Status Badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      product.isActive 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {product.isActive ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
-
-                  {/* Featured Badge */}
-                  {product.featured && (
-                    <div className="absolute top-3 right-3">
-                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                        ⭐ Destacado
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Product Info */}
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 flex-1">
-                      {product.name}
-                    </h3>
-                    <span className="text-lg font-bold text-pink-600 ml-2">
-                      ${product.price}
-                    </span>
-                  </div>
-                  
-                  <p className="text-sm text-gray-900 mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between text-xs text-gray-900 mb-4">
-                    <span>Stock: {product.stock}</span>
-                    <span>Cat: {product.category}</span>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/dashboard/products/edit/${product.id}`}
-                      className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium py-2 px-3 rounded-md transition-colors text-center text-sm"
-                    >
-                      ✏️ Editar
-                    </Link>
-                    <button
-                      onClick={() => handleToggleActive(product.id, product.isActive)}
-                      className={`flex-1 font-medium py-2 px-3 rounded-md transition-colors text-sm ${
-                        product.isActive
-                          ? 'bg-orange-100 hover:bg-orange-200 text-orange-700'
-                          : 'bg-green-100 hover:bg-green-200 text-green-700'
-                      }`}
-                    >
-                      {product.isActive ? '⏸️ Desactivar' : '▶️ Activar'}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-3 rounded-md transition-colors text-sm"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard
+                key={product.id}
+                product={product}
+                variant="dashboard"
+                onEdit={(id) => window.location.href = `/dashboard/products/edit/${id}`}
+                onToggleActive={handleToggleActive}
+                isActive={product.isActive}
+              />
             ))}
           </div>
         )}
