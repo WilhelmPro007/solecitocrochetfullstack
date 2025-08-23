@@ -76,8 +76,17 @@ export default function ProductDetailPage() {
   };
 
   const trackClick = async (clickType: string) => {
-    // Tracking temporalmente deshabilitado mientras arreglamos las APIs
-    console.log('Track click:', clickType, 'for product:', params.id);
+    try {
+      await fetch(`/api/products/${params.id}/track`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ clickType }),
+      });
+    } catch (error) {
+      console.error('Error tracking click:', error);
+    }
   };
 
   const shareOnWhatsApp = () => {

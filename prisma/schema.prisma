@@ -171,8 +171,13 @@ model PopularityMetric {
   whatsappClicks  Int @default(0)
   favoriteClicks  Int @default(0)
   
-  // Score de popularidad calculado
-  popularityScore Float @default(0)
+  // Scores calculados
+  popularityScore Float @default(0)  // Score para productos populares (lógica anterior)
+  featuredScore   Float @default(0)  // Score para productos destacados (nueva lógica)
+  
+  // Clasificación automática
+  isFeatured      Boolean @default(false)  // Producto destacado automático
+  isPopular       Boolean @default(false)  // Producto popular automático
   
   // Última actualización de métricas
   lastCalculated  DateTime @default(now())

@@ -1,7 +1,6 @@
 // src/app/page.tsx
 
 import LandingHero from "@/components/landing/hero";
-import PopularCategory from "@/components/landing/popularCategory";
 import PopularProducts from "@/components/landing/popularProducts";
 import LandingFooter from "@/components/footer/landingFooter";
 import Testimonials from "@/components/landing/Testimonials";
@@ -14,10 +13,7 @@ export default function Home() {
       {/* Hero Section */}
       <LandingHero />
 
-      {/* Categorías */}
-      <PopularCategory />
-
-      {/* Productos Destacados */}
+      {/* Productos Populares */}
       <PopularProducts/>
 
       {/* Testimonios */}
