@@ -46,12 +46,12 @@ export default function CreateProductPage() {
   });
 
   const categories = [
-    { value: 'accesorios', label: 'Accesorios', icon: '🧣' },
-    { value: 'bolsos', label: 'Bolsos', icon: '👜' },
-    { value: 'juguetes', label: 'Juguetes', icon: '🧸' },
-    { value: 'bebe', label: 'Bebé', icon: '👶' },
-    { value: 'hogar', label: 'Hogar', icon: '🏠' },
-    { value: 'ropa', label: 'Ropa', icon: '👗' }
+    { value: 'accesorios', label: 'Accesorios', icon: '🧣', color: 'bg-blue-100 text-blue-800' },
+    { value: 'bolsos', label: 'Bolsos', icon: '👜', color: 'bg-purple-100 text-purple-800' },
+    { value: 'juguetes', label: 'Juguetes', icon: '🧸', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'bebe', label: 'Bebé', icon: '👶', color: 'bg-pink-100 text-pink-800' },
+    { value: 'hogar', label: 'Hogar', icon: '🏠', color: 'bg-green-100 text-green-800' },
+    { value: 'ropa', label: 'Ropa', icon: '👗', color: 'bg-red-100 text-red-800' }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -144,7 +144,7 @@ export default function CreateProductPage() {
         }
       } catch (error) {
         console.error(`Error uploading image ${index}:`, error);
-    }
+      }
     }
     
     return imageResults;
@@ -217,17 +217,29 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Crear Nuevo Producto</h1>
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Crear Nuevo Producto</h1>
+          <p className="text-lg text-gray-600">Completa la información para agregar un nuevo producto a tu catálogo</p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6 text-pink-600">Información Básica</h2>
-              
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Nombre del Producto *
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Información Básica */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-4">
+              <h2 className="text-xl font-semibold text-white flex items-center">
+                <span className="mr-2">📝</span>
+                Información Básica
+              </h2>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Nombre del Producto <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -235,21 +247,21 @@ export default function CreateProductPage() {
                     value={form.name}
                     onChange={handleInputChange}
                     required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="Ej: Gorro tejido a mano"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                    placeholder="Ej: Gorro tejido a mano con diseño floral"
                   />
                 </div>
 
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Categoría *
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Categoría <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="category"
                     value={form.category}
                     onChange={handleInputChange}
                     required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 transition-all duration-200 hover:border-gray-400"
                   >
                     {categories.map(cat => (
                       <option key={cat.value} value={cat.value}>
@@ -259,26 +271,29 @@ export default function CreateProductPage() {
                   </select>
                 </div>
 
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Precio *
-              </label>
-              <input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleInputChange}
-                required
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="0.00"
-              />
-            </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Precio <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input
+                      type="number"
+                      name="price"
+                      value={form.price}
+                      onChange={handleInputChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Stock
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Stock Disponible
                   </label>
                   <input
                     type="number"
@@ -286,187 +301,256 @@ export default function CreateProductPage() {
                     value={form.stock}
                     onChange={handleInputChange}
                     min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="0"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                    placeholder="0"
                   />
                 </div>
               </div>
 
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Descripción
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Descripción del Producto
                 </label>
                 <textarea
                   name="description"
                   value={form.description}
                   onChange={handleInputChange}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                  placeholder="Describe tu producto..."
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400 resize-none"
+                  placeholder="Describe detalladamente tu producto, incluyendo características especiales, colores disponibles, y cualquier detalle importante que los clientes deban saber..."
                 />
               </div>
 
-          <div className="mt-6">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="featured"
-                    checked={form.featured}
-                    onChange={handleInputChange}
-                className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-                  />
-              <span className="ml-2 text-sm text-gray-900">Producto destacado</span>
+              {/* Checkbox de Producto Destacado */}
+              <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-lg p-4">
+                <label className="flex items-start space-x-3 cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      name="featured"
+                      checked={form.featured}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <div className={`w-6 h-6 border-2 rounded-md flex items-center justify-center transition-all duration-200 ${
+                      form.featured 
+                        ? 'bg-yellow-500 border-yellow-500' 
+                        : 'border-gray-300 group-hover:border-yellow-400'
+                    }`}>
+                      {form.featured && (
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm font-medium text-gray-900">Producto Destacado</span>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Los productos destacados aparecerán en la página principal y tendrán prioridad en las búsquedas. 
+                      Ideal para productos especiales, nuevos lanzamientos o favoritos de los clientes.
+                    </p>
+                    {form.featured && (
+                      <div className="mt-2 flex items-center text-yellow-700 text-sm">
+                        <span className="mr-2">⭐</span>
+                        <span>Este producto aparecerá en la landing page como destacado</span>
+                      </div>
+                    )}
+                  </div>
                 </label>
               </div>
             </div>
-
-        {/* Sección de Imágenes */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6 text-pink-600">Imágenes del Producto</h2>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Subir Imágenes
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900"
-            />
-            <p className="text-sm text-gray-700 mt-1">
-              Puedes subir múltiples imágenes. La primera será la imagen principal.
-            </p>
           </div>
 
-          {/* Vista previa de imágenes */}
-          {images.length > 0 && (
-            <div className="space-y-4">
-              {/* Imagen Principal */}
-              {images.find(img => img.isMain) && (
-                <div className="border-2 border-pink-300 rounded-lg p-4 bg-pink-50">
-                  <h3 className="text-sm font-medium text-pink-800 mb-3">🌟 Imagen Principal</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {images.filter(img => img.isMain).map((img, index) => (
-                      <div key={index} className="relative border border-pink-200 rounded-lg p-4 bg-white">
-                        <div className="relative aspect-square mb-3">
-                          <Image
-                            src={img.preview}
-                            alt={img.altText}
-                            fill
-                            className="object-cover rounded-md"
-                          />
-                          <div className="absolute top-2 left-2 bg-pink-600 text-white px-2 py-1 rounded text-xs font-medium">
-                            Principal
-                          </div>
-                        </div>
-                        
-                        <input
-                          type="text"
-                          value={img.altText}
-                          onChange={(e) => updateImageAltText(images.indexOf(img), e.target.value)}
-                          placeholder="Texto alternativo"
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2 text-gray-900 placeholder-gray-600"
-                        />
-                        
-                        <button
-                          type="button"
-                          onClick={() => removeImage(images.indexOf(img))}
-                          className="w-full text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+          {/* Sección de Imágenes */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
+              <h2 className="text-xl font-semibold text-white flex items-center">
+                <span className="mr-2">📸</span>
+                Imágenes del Producto
+              </h2>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Subir Imágenes
+                </label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-pink-400 transition-colors duration-200">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label htmlFor="image-upload" className="cursor-pointer">
+                    <div className="text-6xl mb-4">📁</div>
+                    <p className="text-lg font-medium text-gray-900 mb-2">
+                      Haz clic para seleccionar imágenes
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      PNG, JPG, GIF hasta 10MB. La primera imagen será la imagen principal.
+                    </p>
+                    <button
+                      type="button"
+                      className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200"
+                    >
+                      Seleccionar Imágenes
+                    </button>
+                  </label>
                 </div>
-              )}
+              </div>
 
-              {/* Imágenes Secundarias */}
-              {images.filter(img => !img.isMain).length > 0 && (
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">📷 Imágenes Secundarias</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {images.filter(img => !img.isMain).map((img, index) => {
-                      const actualIndex = images.indexOf(img);
-                      return (
-                        <div key={actualIndex} className="relative border border-gray-200 rounded-lg p-4 bg-white">
-                          <div className="relative aspect-square mb-3">
-                            <Image
-                              src={img.preview}
-                              alt={img.altText}
-                              fill
-                              className="object-cover rounded-md"
-                            />
-                            <div className="absolute top-2 right-2 bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium">
-                              {actualIndex + 1}
+              {/* Vista previa de imágenes */}
+              {images.length > 0 && (
+                <div className="space-y-6">
+                  {/* Imagen Principal */}
+                  {images.find(img => img.isMain) && (
+                    <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-pink-800 mb-4 flex items-center">
+                        <span className="mr-2">🌟</span>
+                        Imagen Principal
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {images.filter(img => img.isMain).map((img, index) => (
+                          <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-pink-200">
+                            <div className="relative aspect-square mb-4 rounded-lg overflow-hidden">
+                              <Image
+                                src={img.preview}
+                                alt={img.altText}
+                                fill
+                                className="object-cover"
+                              />
+                              <div className="absolute top-2 left-2 bg-pink-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                Principal
+                              </div>
                             </div>
-                          </div>
-                          
-                          <input
-                            type="text"
-                            value={img.altText}
-                            onChange={(e) => updateImageAltText(actualIndex, e.target.value)}
-                            placeholder="Texto alternativo"
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2 text-gray-900 placeholder-gray-600"
-                          />
-                          
-                          <div className="flex space-x-2">
+                            
+                            <input
+                              type="text"
+                              value={img.altText}
+                              onChange={(e) => updateImageAltText(images.indexOf(img), e.target.value)}
+                              placeholder="Texto alternativo para SEO"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            />
+                            
                             <button
                               type="button"
-                              onClick={() => setMainImage(actualIndex)}
-                              className="flex-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded transition-colors"
-                            >
-                              Hacer principal
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => removeImage(actualIndex)}
-                              className="flex-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors"
+                              onClick={() => removeImage(images.indexOf(img))}
+                              className="w-full bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                             >
                               Eliminar
                             </button>
                           </div>
-                        </div>
-                      );
-                    })}
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Imágenes Secundarias */}
+                  {images.filter(img => !img.isMain).length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <span className="mr-2">📷</span>
+                        Imágenes Secundarias
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {images.filter(img => !img.isMain).map((img, index) => {
+                          const actualIndex = images.indexOf(img);
+                          return (
+                            <div key={actualIndex} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                              <div className="relative aspect-square mb-4 rounded-lg overflow-hidden">
+                                <Image
+                                  src={img.preview}
+                                  alt={img.altText}
+                                  fill
+                                  className="object-cover"
+                                />
+                                <div className="absolute top-2 right-2 bg-gray-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                  {actualIndex + 1}
+                                </div>
+                              </div>
+                              
+                              <input
+                                type="text"
+                                value={img.altText}
+                                onChange={(e) => updateImageAltText(actualIndex, e.target.value)}
+                                placeholder="Texto alternativo para SEO"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              />
+                              
+                              <div className="flex space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setMainImage(actualIndex)}
+                                  className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                                >
+                                  Hacer Principal
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeImage(actualIndex)}
+                                  className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Información de ayuda */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start space-x-3">
+                      <span className="text-blue-600 text-xl">💡</span>
+                      <div>
+                        <p className="text-sm font-medium text-blue-800 mb-1">Consejos para las imágenes:</p>
+                        <ul className="text-sm text-blue-700 space-y-1">
+                          <li>• La primera imagen será la imagen principal del producto</li>
+                          <li>• Usa imágenes de alta calidad (mínimo 800x800px)</li>
+                          <li>• Incluye diferentes ángulos del producto</li>
+                          <li>• Asegúrate de que el texto alternativo sea descriptivo</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
-
-              {/* Información de orden */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-800">
-                  💡 <strong>Consejo:</strong> La primera imagen será la imagen principal del producto. 
-                  Puedes reordenar las imágenes arrastrándolas o usar los botones para cambiar la imagen principal.
-                </p>
-              </div>
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Información Adicional */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6 text-pink-600">Información Adicional</h2>
-              
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Materiales
+          {/* Información Adicional */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4">
+              <h2 className="text-xl font-semibold text-white flex items-center">
+                <span className="mr-2">ℹ️</span>
+                Información Adicional
+              </h2>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Materiales Utilizados
                   </label>
                   <input
                     type="text"
                     name="materials"
                     value={form.materials}
                     onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="Ej: Lana, algodón, acrílico"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                    placeholder="Ej: Lana 100% acrílica, algodón premium"
                   />
                 </div>
 
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
                     Dimensiones
                   </label>
                   <input
@@ -474,65 +558,91 @@ export default function CreateProductPage() {
                     name="dimensions"
                     value={form.dimensions}
                     onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="Ej: 25cm x 30cm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                    placeholder="Ej: 25cm x 30cm x 5cm"
                   />
                 </div>
 
-                <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Peso
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Peso Aproximado
                   </label>
                   <input
                     type="text"
                     name="weight"
                     value={form.weight}
                     onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-                placeholder="Ej: 200g"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400"
+                    placeholder="Ej: 200g, 0.5kg"
                   />
                 </div>
               </div>
 
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
                   Instrucciones de Cuidado
                 </label>
                 <textarea
                   name="careInstructions"
                   value={form.careInstructions}
                   onChange={handleInputChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 placeholder-gray-600"
-              placeholder="Ej: Lavar a mano con agua fría..."
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200 hover:border-gray-400 resize-none"
+                  placeholder="Ej: Lavar a mano con agua fría, no usar secadora, planchar a temperatura baja..."
                 />
               </div>
             </div>
+          </div>
 
-        {/* Error y Botones */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-700">{error}</p>
-                      </div>
-                    )}
-
-        <div className="flex justify-end space-x-4">
-              <button
-                type="button"
-                onClick={() => router.back()}
-            className="px-6 py-2 border border-gray-300 rounded-md text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
-              >
-                Cancelar
-              </button>
-          <button
-            type="submit"
-            disabled={loading || uploadingImages}
-            className="px-6 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Creando producto...' : uploadingImages ? 'Subiendo imágenes...' : 'Crear Producto'}
-          </button>
+          {/* Error y Botones */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center space-x-3">
+                <span className="text-red-600 text-xl">⚠️</span>
+                <p className="text-red-700 font-medium">{error}</p>
+              </div>
             </div>
-          </form>
-        </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="w-full sm:w-auto px-8 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all duration-200"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading || uploadingImages}
+              className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creando producto...
+                </span>
+              ) : uploadingImages ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Subiendo imágenes...
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  <span className="mr-2">✨</span>
+                  Crear Producto
+                </span>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 } 
