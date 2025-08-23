@@ -45,7 +45,7 @@ const adminNavigation: NavigationItem[] = [
       },
       {
         name: 'Categorías',
-        href: '/dashboard/products/categories',
+        href: '/dashboard/categories',
         icon: '🏷️'
       }
     ]

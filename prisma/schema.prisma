@@ -93,16 +93,41 @@ model Product {
 
 model ProductImage {
   id        String   @id @default(uuid())
-  url       String
+  url       String?  // Para compatibilidad con imágenes existentes
   altText   String?
   isMain    Boolean  @default(false) // Imagen principal del producto
   order     Int      @default(0)     // Orden de las imágenes
+  
+  // Campos para almacenar imagen como BLOB
+  imageData Bytes?   // Datos binarios de la imagen
+  mimeType  String?  // Tipo MIME (image/jpeg, image/png, etc.)
+  filename  String?  // Nombre original del archivo
+  fileSize  Int?     // Tamaño del archivo en bytes
   
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Nuevo modelo para imágenes de categorías de la landing page
+model CategoryImage {
+  id          String   @id @default(uuid())
+  name        String   @unique // Nombre de la categoría (amigurumis, mantas, etc.)
+  altText     String?
+  
+  // Datos de la imagen como BLOB
+  imageData   Bytes    // Datos binarios de la imagen
+  mimeType    String   // Tipo MIME
+  filename    String   // Nombre original del archivo
+  fileSize    Int      // Tamaño del archivo en bytes
+  
+  isActive    Boolean  @default(true)
+  order       Int      @default(0) // Para ordenar las categorías
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ProductClick {

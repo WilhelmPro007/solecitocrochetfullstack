@@ -37,7 +37,7 @@ interface ProductImage {
 }
 
 export default function ProductsManagementPage() {
-  const { session, isLoading, hasAdminAccess } = useUserRole();
+  const { isLoading, hasAdminAccess } = useUserRole();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');

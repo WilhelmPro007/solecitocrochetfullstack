@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -31,6 +31,14 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         images: {
+          select: {
+            id: true,
+            url: true,
+            altText: true,
+            isMain: true,
+            order: true,
+            imageData: true
+          },
           orderBy: { order: 'asc' }
         },
         creator: {
@@ -40,7 +48,19 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json(products);
+    // Transformar productos para manejar imágenes BLOB
+    const transformedProducts = products.map(product => ({
+      ...product,
+      images: product.images.map(image => ({
+        id: image.id,
+        url: image.imageData ? `/api/images/${image.id}` : image.url,
+        altText: image.altText,
+        isMain: image.isMain,
+        order: image.order
+      }))
+    }));
+
+    return NextResponse.json(transformedProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

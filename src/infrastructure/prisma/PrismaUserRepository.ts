@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 import { User } from "../../domain/entities/User";
 
@@ -22,7 +22,7 @@ export class PrismaUserRepository implements IUserRepository {
         name: user.name,
         email: user.email,
         password: user.password,
-        role: user.role,
+        role: user.role as UserRole,
       },
     });
     return new User(

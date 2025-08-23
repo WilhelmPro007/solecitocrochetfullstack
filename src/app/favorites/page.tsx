@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function FavoritesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
@@ -23,13 +25,13 @@ export default function FavoritesPage() {
           <p className="text-gray-900 mb-6">
             Explora nuestro catálogo y guarda los productos que más te gusten
           </p>
-          <a
+          <Link
             href="/products"
             className="inline-flex items-center space-x-2 bg-pink-400 hover:bg-pink-500 text-white font-medium py-3 px-6 rounded-md transition-colors"
           >
             <span>🛍️</span>
             <span>Ver Catálogo</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
