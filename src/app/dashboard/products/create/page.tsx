@@ -81,6 +81,20 @@ export default function CreateProductPage() {
     });
   };
 
+  const reorderImages = (fromIndex: number, toIndex: number) => {
+    setImages(prev => {
+      const newImages = [...prev];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      
+      // Actualizar orden y isMain
+      return newImages.map((img, index) => ({
+        ...img,
+        isMain: index === 0 // La primera imagen siempre es principal
+      }));
+    });
+  };
+
   const removeImage = (index: number) => {
     setImages(prev => {
       const newImages = prev.filter((_, i) => i !== index);
@@ -328,51 +342,106 @@ export default function CreateProductPage() {
 
           {/* Vista previa de imágenes */}
           {images.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.map((img, index) => (
-                <div key={index} className="relative border border-gray-200 rounded-lg p-4">
-                  <div className="relative aspect-square mb-3">
-                    <Image
-                      src={img.preview}
-                      alt={img.altText}
-                      fill
-                      className="object-cover rounded-md"
-                    />
-                    {img.isMain && (
-                      <div className="absolute top-2 left-2 bg-pink-600 text-white px-2 py-1 rounded text-xs font-medium">
-                        Principal
+            <div className="space-y-4">
+              {/* Imagen Principal */}
+              {images.find(img => img.isMain) && (
+                <div className="border-2 border-pink-300 rounded-lg p-4 bg-pink-50">
+                  <h3 className="text-sm font-medium text-pink-800 mb-3">🌟 Imagen Principal</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {images.filter(img => img.isMain).map((img, index) => (
+                      <div key={index} className="relative border border-pink-200 rounded-lg p-4 bg-white">
+                        <div className="relative aspect-square mb-3">
+                          <Image
+                            src={img.preview}
+                            alt={img.altText}
+                            fill
+                            className="object-cover rounded-md"
+                          />
+                          <div className="absolute top-2 left-2 bg-pink-600 text-white px-2 py-1 rounded text-xs font-medium">
+                            Principal
+                          </div>
+                        </div>
+                        
+                        <input
+                          type="text"
+                          value={img.altText}
+                          onChange={(e) => updateImageAltText(images.indexOf(img), e.target.value)}
+                          placeholder="Texto alternativo"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2 text-gray-900 placeholder-gray-600"
+                        />
+                        
+                        <button
+                          type="button"
+                          onClick={() => removeImage(images.indexOf(img))}
+                          className="w-full text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors"
+                        >
+                          Eliminar
+                        </button>
                       </div>
-                    )}
-                  </div>
-                  
-                  <input
-                    type="text"
-                    value={img.altText}
-                    onChange={(e) => updateImageAltText(index, e.target.value)}
-                    placeholder="Texto alternativo"
-                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2 text-gray-900 placeholder-gray-600"
-                  />
-                  
-                  <div className="flex space-x-2">
-                    {!img.isMain && (
-                      <button
-                        type="button"
-                        onClick={() => setMainImage(index)}
-                        className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded"
-                      >
-                        Hacer principal
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded"
-                    >
-                      Eliminar
-                    </button>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Imágenes Secundarias */}
+              {images.filter(img => !img.isMain).length > 0 && (
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">📷 Imágenes Secundarias</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {images.filter(img => !img.isMain).map((img, index) => {
+                      const actualIndex = images.indexOf(img);
+                      return (
+                        <div key={actualIndex} className="relative border border-gray-200 rounded-lg p-4 bg-white">
+                          <div className="relative aspect-square mb-3">
+                            <Image
+                              src={img.preview}
+                              alt={img.altText}
+                              fill
+                              className="object-cover rounded-md"
+                            />
+                            <div className="absolute top-2 right-2 bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium">
+                              {actualIndex + 1}
+                            </div>
+                          </div>
+                          
+                          <input
+                            type="text"
+                            value={img.altText}
+                            onChange={(e) => updateImageAltText(actualIndex, e.target.value)}
+                            placeholder="Texto alternativo"
+                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2 text-gray-900 placeholder-gray-600"
+                          />
+                          
+                          <div className="flex space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => setMainImage(actualIndex)}
+                              className="flex-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded transition-colors"
+                            >
+                              Hacer principal
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeImage(actualIndex)}
+                              className="flex-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Información de orden */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Consejo:</strong> La primera imagen será la imagen principal del producto. 
+                  Puedes reordenar las imágenes arrastrándolas o usar los botones para cambiar la imagen principal.
+                </p>
+              </div>
             </div>
           )}
         </div>

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Head from 'next/head';
+import ImageGallery from '@/components/products/ImageGallery';
 
 interface Product {
   id: string;
@@ -42,7 +43,6 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -59,10 +59,6 @@ export default function ProductDetailPage() {
       
       if (response.ok) {
         setProduct(data);
-        // Encontrar la imagen principal o usar la primera
-        const mainImageIndex = data.images.findIndex((img: ProductImage) => img.isMain);
-        setSelectedImageIndex(mainImageIndex >= 0 ? mainImageIndex : 0);
-        
         // Track view
         trackClick('view');
       } else {
@@ -241,78 +237,39 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Images Section */}
             <div className="space-y-4">
-              {/* Main Image */}
-              <div className="aspect-square relative bg-white rounded-lg border border-pink-100 shadow-lg overflow-hidden">
-                {product.images.length > 0 && product.images[selectedImageIndex] ? (
-                  <Image
-                    src={`/api/images/${product.images[selectedImageIndex].id}`}
-                    alt={product.images[selectedImageIndex]?.altText || product.name}
-                    fill
-                    className="object-cover"
-                    priority
-                    onError={(e) => {
-                      e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y5ZmJmZiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDAiIGZpbGw9IiM5Y2E5YjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5OX77iPPC90ZXh0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2E5YjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gaW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <span className="text-6xl">📷</span>
-                  </div>
-                )}
+              {/* Image Gallery */}
+              <div className="relative">
+                <ImageGallery
+                  images={product.images}
+                  className="w-full"
+                />
                 
                 {/* Favorite Button */}
                 <button
                   onClick={toggleFavorite}
-                  className="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
+                  className="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10"
                   title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                 >
-                  <span className="text-2xl">
+                  <span className="text-xl">
                     {isFavorite ? '💖' : '🤍'}
                   </span>
                 </button>
 
                 {/* Featured Badge */}
                 {product.featured && (
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-4 left-4 z-10">
                     <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
                       ⭐ Destacado
                     </span>
                   </div>
                 )}
               </div>
-
-              {/* Thumbnail Images */}
-              {product.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {product.images.map((image, index) => (
-                    <button
-                      key={image.id}
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={`aspect-square relative bg-white rounded-md border-2 overflow-hidden transition-all ${
-                        selectedImageIndex === index 
-                          ? 'border-pink-400 ring-2 ring-pink-200' 
-                          : 'border-gray-200 hover:border-pink-300'
-                      }`}
-                    >
-                      <Image
-                        src={`/api/images/${image.id}`}
-                        alt={image.altText || `${product.name} - imagen ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y5ZmJmZiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAwIiBmaWxsPSIjOTNhOWIyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+Tl++4jzwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjYwJSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSIjOTNhOWIyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U2luIGltYWdlbjwvdGV4dD4KPC9zdmc+';
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Product Info Section */}
             <div className="space-y-6">
               {/* Header */}
-    <div>
+              <div>
                 <div className="flex items-start justify-between mb-4">
                   <h1 className="text-3xl font-bold text-gray-900">
                     {product.name}
@@ -423,7 +380,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
-    </div>
+      </div>
     </>
   );
 }

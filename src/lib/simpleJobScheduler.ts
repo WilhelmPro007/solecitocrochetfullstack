@@ -79,11 +79,7 @@ async function processJob(job: QueuedJob): Promise<boolean> {
         throw new Error(`Tipo de job no válido: ${job.type}`);
     }
     
-    if (result.skipped) {
-      console.log(`⚠️ Job ${job.type} saltado para ${job.productName}: ${result.reason}`);
-    } else {
-      console.log(`✅ Job ${job.type} completado para ${job.productName}`);
-    }
+    console.log(`✅ Job ${job.type} completado para ${job.productName}`);
     
     job.status = 'completed';
     return true;
@@ -376,7 +372,7 @@ export async function initializeJobScheduler() {
     
     // Programar jobs para productos existentes (solo en la primera ejecución)
     const stats = getQueueStats();
-    if (stats.total.totalJobs === 0) {
+    if (stats.total.waiting === 0 && stats.total.running === 0) {
       console.log('📦 Programando jobs para productos existentes...');
       await scheduleAllProductJobs();
     }

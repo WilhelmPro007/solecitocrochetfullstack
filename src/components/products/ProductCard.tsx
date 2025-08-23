@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface ProductImage {
   id: string;
   url: string;
   altText?: string;
   isMain: boolean;
+  order: number;
 }
 
 interface Product {
@@ -41,6 +43,7 @@ export default function ProductCard({
   onToggleActive,
   isActive = true
 }: ProductCardProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
@@ -56,9 +59,40 @@ export default function ProductCard({
     return null;
   };
 
-  const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
-  const imageSrc = mainImage ? getImageSrc(mainImage) : null;
+  // Ordenar imágenes por orden y isMain
+  const sortedImages = product.images?.sort((a, b) => {
+    if (a.isMain) return -1;
+    if (b.isMain) return 1;
+    return a.order - b.order;
+  }) || [];
+
+  const currentImage = sortedImages[currentImageIndex] || sortedImages[0];
+  const imageSrc = currentImage ? getImageSrc(currentImage) : null;
   
+  const nextImage = () => {
+    if (sortedImages.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % sortedImages.length);
+      setImageLoaded(false);
+      setImageError(false);
+    }
+  };
+
+  const prevImage = () => {
+    if (sortedImages.length > 1) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? sortedImages.length - 1 : prev - 1
+      );
+      setImageLoaded(false);
+      setImageError(false);
+    }
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+    setImageLoaded(false);
+    setImageError(false);
+  };
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -80,172 +114,200 @@ export default function ProductCard({
   const cardContent = (
     <div className={`group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 ${!isActive && variant === 'dashboard' ? 'opacity-60' : ''}`}>
       
-      {/* Image Container */}
+      {/* Image Container with Gallery */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {imageSrc && !imageError ? (
-          <Image
-            src={imageSrc}
-            alt={mainImage?.altText || product.name}
-            fill
-            className={`object-cover transition-all duration-500 group-hover:scale-105 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+          <>
+            <Image
+              src={imageSrc}
+              alt={currentImage?.altText || product.name}
+              fill
+              className={`object-cover transition-all duration-500 group-hover:scale-105 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageError(true)}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+            
+            {/* Navigation Arrows - Solo mostrar si hay más de una imagen */}
+            {sortedImages.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-1.5 shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100"
+                  aria-label="Imagen anterior"
+                >
+                  <ChevronLeftIcon className="w-4 h-4" />
+                </button>
+                
+                <button
+                  onClick={nextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-full p-1.5 shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100"
+                  aria-label="Siguiente imagen"
+                >
+                  <ChevronRightIcon className="w-4 h-4" />
+                </button>
+              </>
+            )}
+            
+            {/* Image Counter */}
+            {sortedImages.length > 1 && (
+              <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                {currentImageIndex + 1} / {sortedImages.length}
+              </div>
+            )}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <div className="text-center">
               <div className="text-4xl mb-2 text-gray-300">📷</div>
-              <span className="text-xs text-gray-400">Sin imagen</span>
+              <div className="text-sm text-gray-400">Sin imagen</div>
             </div>
           </div>
         )}
-
-        {/* Loading skeleton */}
-        {!imageLoaded && !imageError && imageSrc && (
+        
+        {/* Loading Skeleton */}
+        {!imageLoaded && imageSrc && (
           <div className="absolute inset-0 bg-gray-200 animate-pulse" />
         )}
-
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.featured && (
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
-              ⭐ Destacado
-            </span>
-          )}
-          {product.stock === 0 && (
-            <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
-              Agotado
-            </span>
-          )}
-          {!isActive && variant === 'dashboard' && (
-            <span className="bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
-              Inactivo
-            </span>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
-          {variant === 'catalog' && onFavoriteToggle && (
-            <button
-              onClick={handleFavoriteClick}
-              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-white hover:scale-110"
-              title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-            >
-              <span className="text-lg">
-                {isFavorite ? '❤️' : '🤍'}
-              </span>
-            </button>
-          )}
-          
-          {variant === 'dashboard' && (
-            <div className="flex flex-col gap-1">
-              {onEdit && (
-                <button
-                  onClick={handleEditClick}
-                  className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:bg-blue-600 hover:scale-110"
-                  title="Editar producto"
-                >
-                  <span className="text-xs">✏️</span>
-                </button>
-              )}
-              {onToggleActive && (
-                <button
-                  onClick={handleToggleActiveClick}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 ${
-                    isActive 
-                      ? 'bg-red-500 hover:bg-red-600 text-white' 
-                      : 'bg-green-500 hover:bg-green-600 text-white'
-                  }`}
-                  title={isActive ? 'Desactivar producto' : 'Activar producto'}
-                >
-                  <span className="text-xs">
-                    {isActive ? '👁️‍🗨️' : '👁️'}
-                  </span>
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Hover overlay for better interaction feedback */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+        
+        {/* Image Thumbnails - Solo mostrar si hay más de una imagen */}
+        {sortedImages.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+            {sortedImages.map((image, index) => (
+              <button
+                key={image.id}
+                onClick={() => goToImage(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentImageIndex 
+                    ? 'bg-white scale-125' 
+                    : 'bg-white/50 hover:bg-white/75'
+                }`}
+                aria-label={`Ir a imagen ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+        
+        {/* Favorite Button */}
+        {variant === 'catalog' && onFavoriteToggle && (
+          <button
+            onClick={handleFavoriteClick}
+            className={`absolute top-2 left-2 p-2 rounded-full transition-all duration-200 ${
+              isFavorite 
+                ? 'bg-red-500 text-white shadow-lg' 
+                : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+            }`}
+            aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          >
+            <svg className="w-5 h-5" fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 000-6.364 4.5 4.5 0 00-6.364 0L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+        )}
+        
+        {/* Featured Badge */}
+        {product.featured && (
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+            ⭐ Destacado
+          </div>
+        )}
+        
+        {/* Stock Badge */}
+        {product.stock === 0 && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+            Agotado
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
-        {/* Title and Category */}
-        <div className="space-y-1">
-          <h3 className="font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-pink-700 transition-colors duration-200">
-            {product.name}
-          </h3>
-          <p className="text-sm text-gray-500 capitalize font-medium">
-            {product.category}
-          </p>
+      <div className="p-4">
+        {/* Category */}
+        <div className="text-xs text-blue-600 font-medium mb-1 capitalize">
+          {product.category}
         </div>
-
+        
+        {/* Title */}
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+          {product.name}
+        </h3>
+        
         {/* Description */}
         {product.description && (
-          <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
             {product.description}
           </p>
         )}
-
-        {/* Price and Stock */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-gray-900">
-              ${product.price.toFixed(2)}
-            </span>
-            {variant === 'dashboard' && (
-              <span className="text-xs text-gray-500">
-                Stock: {product.stock}
-              </span>
-            )}
+        
+        {/* Price and Actions */}
+        <div className="flex items-center justify-between">
+          <div className="text-lg font-bold text-gray-900">
+            ${product.price.toFixed(2)}
           </div>
           
-          {variant === 'catalog' && (
-            <div className="flex items-center space-x-2">
-              {product.stock > 0 ? (
-                <span className="text-xs text-green-600 font-medium">
-                  Disponible
-                </span>
-              ) : (
-                <span className="text-xs text-red-600 font-medium">
-                  Agotado
-                </span>
+          {variant === 'dashboard' ? (
+            <div className="flex gap-2">
+              {onEdit && (
+                <button
+                  onClick={handleEditClick}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  aria-label="Editar producto"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
               )}
+              
+              {onToggleActive && (
+                <button
+                  onClick={handleToggleActiveClick}
+                  className={`p-2 rounded-lg transition-colors ${
+                    isActive 
+                      ? 'text-green-600 hover:bg-green-50' 
+                      : 'text-red-600 hover:bg-red-50'
+                  }`}
+                  aria-label={isActive ? 'Desactivar producto' : 'Activar producto'}
+                >
+                  {isActive ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">
+              Stock: {product.stock}
             </div>
           )}
         </div>
-
-        {/* Actions for Dashboard */}
+        
+        {/* Status Badge for Dashboard */}
         {variant === 'dashboard' && (
-          <div className="pt-2 border-t border-gray-100">
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>ID: {product.id.slice(0, 8)}...</span>
-              <span className={`font-medium ${isActive ? 'text-green-600' : 'text-red-600'}`}>
-                {isActive ? 'Activo' : 'Inactivo'}
-              </span>
-            </div>
+          <div className={`mt-2 text-xs px-2 py-1 rounded-full text-center ${
+            isActive 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-red-100 text-red-800'
+          }`}>
+            {isActive ? 'Activo' : 'Inactivo'}
           </div>
         )}
       </div>
-
-      {/* Subtle bottom gradient for depth */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </div>
   );
 
+  // Render as link for catalog, as div for dashboard
   if (variant === 'catalog') {
     return (
-      <Link 
-        href={`/products/${product.category}/${product.id}`}
-        className="block transform transition-transform duration-200 hover:scale-[1.02]"
-      >
+      <Link href={`/products/${product.category}/${product.id}`} className="block">
         {cardContent}
       </Link>
     );
