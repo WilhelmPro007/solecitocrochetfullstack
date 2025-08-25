@@ -5,13 +5,24 @@ import { authOptions } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
-// GET - Obtener todos los productos
+// GET - Obtener todos los productos con paginación
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const active = searchParams.get('active');
     const featured = searchParams.get('featured');
+    
+    // Parámetros de paginación
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '16');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    // Validar parámetros de paginación
+    const validPage = Math.max(1, page);
+    const validLimit = Math.min(Math.max(1, limit), 100); // Máximo 100 productos por página
+    const offset = (validPage - 1) * validLimit;
 
     const where: any = {};
     
@@ -25,6 +36,29 @@ export async function GET(request: NextRequest) {
     
     if (featured !== null) {
       where.featured = featured === 'true';
+    }
+
+    // Obtener el total de productos que coinciden con los filtros
+    const totalProducts = await prisma.product.count({ where });
+    
+    // Calcular metadatos de paginación
+    const totalPages = Math.ceil(totalProducts / validLimit);
+    const hasNextPage = validPage < totalPages;
+    const hasPreviousPage = validPage > 1;
+
+    // Construir ordenamiento
+    let orderBy: any = {};
+    switch (sortBy) {
+      case 'price':
+        orderBy.price = sortOrder;
+        break;
+      case 'name':
+        orderBy.name = sortOrder;
+        break;
+      case 'createdAt':
+      default:
+        orderBy.createdAt = sortOrder;
+        break;
     }
 
     const products = await prisma.product.findMany({
@@ -45,7 +79,9 @@ export async function GET(request: NextRequest) {
           select: { id: true, name: true, email: true }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy,
+      skip: offset,
+      take: validLimit
     });
 
     // Transformar productos para manejar imágenes BLOB
@@ -60,7 +96,21 @@ export async function GET(request: NextRequest) {
       }))
     }));
 
-    return NextResponse.json(transformedProducts);
+    // Respuesta con metadatos de paginación
+    const response = {
+      products: transformedProducts,
+      pagination: {
+        currentPage: validPage,
+        totalPages,
+        totalProducts,
+        hasNextPage,
+        hasPreviousPage,
+        limit: validLimit,
+        offset
+      }
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
