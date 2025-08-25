@@ -86,7 +86,7 @@ export async function PUT(
     } = data;
 
     // Actualizar el producto
-    const product = await prisma.product.update({
+    await prisma.product.update({
       where: { id },
       data: {
         name,

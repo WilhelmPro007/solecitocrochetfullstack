@@ -70,26 +70,7 @@ export default function ProductsManagementPage() {
     }
   };
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm('¿Estás segura de que quieres desactivar este producto?')) {
-      return;
-    }
 
-    try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        fetchProducts(); // Recargar la lista
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Error al eliminar producto');
-      }
-    } catch (error) {
-      setError('Error de conexión');
-    }
-  };
 
   const handleToggleActive = async (productId: string, currentStatus: boolean) => {
     try {

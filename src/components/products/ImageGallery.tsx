@@ -31,7 +31,7 @@ export default function ImageGallery({
   onImageReorder,
   onImageDelete,
   onImageSetMain,
-  onImageUpdate,
+
   editable = false,
   className = ''
 }: ImageGalleryProps) {

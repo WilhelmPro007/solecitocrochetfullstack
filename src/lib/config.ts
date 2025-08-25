@@ -1,7 +1,6 @@
 // Configuración del Job Scheduler
 export const SCHEDULER_CONFIG = {
   // Configuración de jobs
-  MAX_CONCURRENT_JOBS: 3,
   MAX_ATTEMPTS: 3,
   JOB_DELAY: 1000, // 1 segundo entre jobs
   

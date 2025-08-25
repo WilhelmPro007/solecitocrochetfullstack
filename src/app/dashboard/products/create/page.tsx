@@ -81,19 +81,7 @@ export default function CreateProductPage() {
     });
   };
 
-  const reorderImages = (fromIndex: number, toIndex: number) => {
-    setImages(prev => {
-      const newImages = [...prev];
-      const [movedImage] = newImages.splice(fromIndex, 1);
-      newImages.splice(toIndex, 0, movedImage);
-      
-      // Actualizar orden y isMain
-      return newImages.map((img, index) => ({
-        ...img,
-        isMain: index === 0 // La primera imagen siempre es principal
-      }));
-    });
-  };
+
 
   const removeImage = (index: number) => {
     setImages(prev => {
@@ -457,7 +445,7 @@ export default function CreateProductPage() {
                         Imágenes Secundarias
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {images.filter(img => !img.isMain).map((img, index) => {
+                        {images.filter(img => !img.isMain).map((img) => {
                           const actualIndex = images.indexOf(img);
                           return (
                             <div key={actualIndex} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">

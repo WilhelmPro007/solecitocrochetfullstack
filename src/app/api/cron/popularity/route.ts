@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET para testing manual (solo en desarrollo)
-export async function GET(request: NextRequest) {
+export async function GET() {
   if (process.env.NODE_ENV === 'production') {
     return NextResponse.json(
       { error: 'Método no permitido en producción' },

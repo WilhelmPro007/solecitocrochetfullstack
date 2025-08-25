@@ -1,9 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { 
-  calculateProductPopularity, 
-  calculateProductFeatured, 
-  updateProductClassification 
-} from './productMetrics';
+
 
 const prisma = new PrismaClient();
 

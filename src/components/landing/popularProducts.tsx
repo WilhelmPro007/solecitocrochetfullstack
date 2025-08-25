@@ -84,17 +84,7 @@ export default function PopularProducts() {
     return null;
   };
 
-  const getCategoryIcon = (category: string) => {
-    const categoryIcons: { [key: string]: string } = {
-      accesorios: '🧣',
-      bolsos: '👜',
-      juguetes: '🧸',
-      bebe: '👶',
-      hogar: '🏠',
-      ropa: '👗'
-    };
-    return categoryIcons[category] || '🎀';
-  };
+
 
   if (loading) {
     return (
@@ -214,9 +204,8 @@ export default function PopularProducts() {
 
                     {/* Category Badge */}
                     <div className="absolute bottom-4 right-4">
-                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full text-sm font-medium capitalize flex items-center space-x-1">
-                        <span>{getCategoryIcon(product.category)}</span>
-                        <span>{product.category}</span>
+                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                        {product.category}
                       </span>
                     </div>
                   </div>

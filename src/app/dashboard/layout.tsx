@@ -2,8 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
-import AdminNavbar from '@/components/admin/AdminNavbar';
-import { useSidebar } from '@/hooks/useSidebar';
+import { useSidebarContext } from '@/contexts/SidebarContext';
 
 export default function DashboardLayout({
   children,
@@ -11,7 +10,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession();
-  const { sidebarOpen, setSidebarOpen, closeSidebar } = useSidebar();
+  const { sidebarOpen, setSidebarOpen, closeSidebar } = useSidebarContext();
   const userRole = (session?.user as any)?.role;
   const isAdmin = userRole === 'ADMIN' || userRole === 'SUPERADMIN';
 
@@ -25,14 +24,8 @@ export default function DashboardLayout({
             onClose={closeSidebar} 
           />
 
-          {/* Main layout with navbar and content */}
+          {/* Main layout with content */}
           <div className="lg:ml-64">
-            {/* Admin Navbar */}
-            <AdminNavbar 
-              sidebarOpen={sidebarOpen}
-              setSidebarOpen={setSidebarOpen}
-            />
-
             {/* Main content */}
             <main className="p-4 lg:p-6">
               <div className="max-w-7xl mx-auto">

@@ -31,7 +31,7 @@ let isRunning = false;
 let isPaused = false;
 
 // Configuración
-const MAX_CONCURRENT_JOBS = 3;
+
 const MAX_ATTEMPTS = 3;
 const JOB_DELAY = 1000; // 1 segundo entre jobs
 
@@ -64,16 +64,15 @@ async function processJob(job: QueuedJob): Promise<boolean> {
     
     job.status = 'running';
     
-    let result;
     switch (job.type) {
       case 'popularity':
-        result = await calculateProductPopularity(job.productId);
+        await calculateProductPopularity(job.productId);
         break;
       case 'featured':
-        result = await calculateProductFeatured(job.productId);
+        await calculateProductFeatured(job.productId);
         break;
       case 'classification':
-        result = await updateProductClassification(job.productId);
+        await updateProductClassification(job.productId);
         break;
       default:
         throw new Error(`Tipo de job no válido: ${job.type}`);

@@ -8,7 +8,7 @@ export enum UserRole {
 
 export function useUserRole() {
   const { data: session, status } = useSession();
-  const userRole = (session?.user as any)?.role as UserRole;
+  const userRole = session?.user?.role as UserRole | undefined;
 
   const isLoading = status === 'loading';
   const isAuthenticated = !!session?.user;
@@ -34,7 +34,7 @@ export function useUserRole() {
       [UserRole.SUPERADMIN]: 3
     };
 
-    const userLevel = roleHierarchy[userRole] || 0;
+    const userLevel = userRole ? roleHierarchy[userRole] || 0 : 0;
     const requiredLevel = roleHierarchy[minimumRole] || 0;
     
     return userLevel >= requiredLevel;

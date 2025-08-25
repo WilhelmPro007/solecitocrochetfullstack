@@ -103,13 +103,12 @@ export default function AdminNavbar({ sidebarOpen, setSidebarOpen }: AdminNavbar
           {/* Right section */}
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <button className="p-2 text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors relative">
+            {/* <button className="p-2 text-gray-900 hover:text-pink-600 hover:bg-pink-50 rounded-md transition-colors relative">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.07 2.82l-.9.45a2 2 0 00-1.09 1.79l0 .01c0 .67-.21 1.32-.6 1.86l-.18.24a2 2 0 00-.18 2.08l.05.11a2 2 0 001.8 1.13h.02a2 2 0 001.8-1.13l.05-.11a2 2 0 00-.18-2.08l-.18-.24c-.39-.54-.6-1.19-.6-1.86v-.01a2 2 0 00-1.09-1.79l-.9-.45z"/>
               </svg>
-              {/* Notification badge */}
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-            </button>
+            </button> */}
 
             {/* Quick actions */}
             <Link

@@ -57,7 +57,7 @@ export default function Dashboard() {
       <main>
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            ¡Bienvenida de vuelta, {data.user.name}! 💕
+            ¡Bienvenid@ de vuelta, {data.user.name}! 💕
           </h2>
           <p className="text-gray-900">
             Aquí puedes gestionar tu cuenta y ver tu actividad en Solecito Crochet

@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 // GET - Obtener todas las imágenes de categorías
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const categories = await prisma.categoryImage.findMany({
       where: { isActive: true },
