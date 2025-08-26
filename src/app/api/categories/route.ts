@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { getCategoryConfig } from '@/lib/categoryConfig';
 
 const prisma = new PrismaClient();
 
@@ -172,28 +173,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// Función para obtener configuración de categorías predefinidas
-function getCategoryConfig(categorySlug: string) {
-  const categoryConfigs: { [key: string]: { name: string; icon: string; description: string } } = {
-    'accesorios': { name: 'Accesorios', icon: '🧣', description: 'Gorros, bufandas, guantes y otros accesorios tejidos' },
-    'bolsos': { name: 'Bolsos', icon: '👜', description: 'Bolsos, mochilas y carteras tejidas a mano' },
-    'juguetes': { name: 'Juguetes', icon: '🧸', description: 'Juguetes tejidos y amigurumis para niños' },
-    'bebe': { name: 'Bebé', icon: '👶', description: 'Ropa y accesorios especiales para bebés' },
-    'hogar': { name: 'Hogar', icon: '🏠', description: 'Elementos decorativos y útiles para el hogar' },
-    'ropa': { name: 'Ropa', icon: '👗', description: 'Prendas de vestir tejidas a mano' },
-    'amigurumis': { name: 'Amigurumis', icon: '🐰', description: 'Muñecos tejidos con técnica amigurumi' },
-    'mantas': { name: 'Mantas', icon: '🛏️', description: 'Mantas y cobijas tejidas a mano' },
-    'toallas': { name: 'Toallas', icon: '🧺', description: 'Toallas y paños de cocina tejidos' },
-    'decoracion': { name: 'Decoración', icon: '🏺', description: 'Elementos decorativos para el hogar' },
-    'cojines': { name: 'Cojines', icon: '🪑', description: 'Cojines y almohadones tejidos' },
-    'alfombras': { name: 'Alfombras', icon: '🟫', description: 'Alfombras y tapetes tejidos a mano' }
-  };
-
-  return categoryConfigs[categorySlug] || { 
-    name: categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1), 
-    icon: '🎀',
-    description: 'Categoría personalizada'
-  };
 } 

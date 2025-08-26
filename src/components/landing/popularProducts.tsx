@@ -63,19 +63,19 @@ export default function PopularProducts() {
     
     if (popularityScore > 10) {
       return (
-        <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+        <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-white/20">
           🔥 Muy Popular
         </span>
       );
     } else if (popularityScore > 5) {
       return (
-        <span className="bg-gradient-to-r from-orange-400 to-red-400 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+        <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-white/20">
           ⭐ Popular
         </span>
       );
     } else if (totalClicks > 0) {
       return (
-        <span className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+        <span className="bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-white/20">
           👀 Visto {totalClicks} veces
         </span>
       );
@@ -154,11 +154,36 @@ export default function PopularProducts() {
               const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
               
               return (
-                <div key={product.id} className="bg-white dark:bg-gray-100 rounded-xl overflow-hidden shadow-lg border-2 border-yellow-200 hover:shadow-xl transition-all duration-300 group relative">
-                  {/* Badge de Destacado */}
-                  <div className="absolute top-4 left-4 z-10">
+                <Link
+                  key={product.id}
+                  href={`/products/${product.category}/${product.id}`}
+                  className="block bg-white dark:bg-gray-100 rounded-xl overflow-hidden shadow-lg border-2 border-yellow-200 hover:shadow-xl transition-all duration-300 group relative cursor-pointer hover:scale-[1.02] hover:-translate-y-1"
+                >
+                  {/* Badge de Destacado - Top Left */}
+                  <div className="absolute top-3 left-3 z-20">
                     <span className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
                       ⭐ Destacado
+                    </span>
+                  </div>
+                  
+                  {/* Popularity Badge - Top Right */}
+                  {getPopularityBadge(product) && (
+                    <div className="absolute top-3 right-3 z-20">
+                      {getPopularityBadge(product)}
+                    </div>
+                  )}
+
+                  {/* Category Badge - Bottom Left */}
+                  <div className="absolute bottom-3 left-3 z-20">
+                    <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full text-sm font-medium capitalize shadow-sm">
+                      {product.category}
+                    </span>
+                  </div>
+
+                  {/* Indicador de clickeable */}
+                  <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="bg-black/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+                      👆 Click para ver
                     </span>
                   </div>
                   
@@ -171,7 +196,7 @@ export default function PopularProducts() {
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y5ZmJmZiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5Y2E5YjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gaW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
+                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y5ZmJmZiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l5ZT0iMTQiIGZpbGw9IiM5Y2E5YjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gaW1hZ2VuPC90ZXh0Pgo8L3N2Zz4=';
                         }}
                       />
                     ) : (
@@ -179,20 +204,6 @@ export default function PopularProducts() {
                         <span className="text-4xl text-gray-900">📷</span>
                       </div>
                     )}
-                    
-                    {/* Popularity Badge */}
-                    {getPopularityBadge(product) && (
-                      <div className="absolute top-4 right-4">
-                        {getPopularityBadge(product)}
-                      </div>
-                    )}
-
-                    {/* Category Badge */}
-                    <div className="absolute bottom-4 right-4">
-                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full text-sm font-medium capitalize">
-                        {product.category}
-                      </span>
-                    </div>
                   </div>
 
                   {/* Product Info */}
@@ -229,24 +240,20 @@ export default function PopularProducts() {
                       )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="space-y-3">
-                      <Link
-                        href={`/products/${product.category}/${product.id}`}
-                        className="block w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 text-center text-sm shadow-lg hover:shadow-xl"
-                      >
-                        Ver Detalles
-                      </Link>
-                      <button
-                        onClick={() => shareOnWhatsApp(product)}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg hover:shadow-xl"
-                      >
-                        <span>📱</span>
-                        <span>Comprar por WhatsApp</span>
-                      </button>
-                    </div>
+                    {/* Action Button - Solo WhatsApp ya que la card completa es clickeable */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        shareOnWhatsApp(product);
+                      }}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm shadow-lg hover:shadow-xl"
+                    >
+                      <span>📱</span>
+                      <span>Comprar por WhatsApp</span>
+                    </button>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -269,7 +276,11 @@ export default function PopularProducts() {
               const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
               
               return (
-                <div key={product.id} className="bg-white dark:bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-300 hover:shadow-md transition-shadow group">
+                <Link
+                  key={product.id}
+                  href={`/products/${product.category}/${product.id}`}
+                  className="block bg-white dark:bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-300 hover:shadow-md transition-all duration-300 group cursor-pointer hover:scale-[1.02] hover:-translate-y-1"
+                >
                   {/* Product Image */}
                   <div className="relative aspect-square overflow-hidden">
                     {mainImage ? (
@@ -288,15 +299,24 @@ export default function PopularProducts() {
                       </div>
                     )}
                     
-                    {/* Badges */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-2">
-                      {getPopularityBadge(product)}
+                    {/* Popularity Badge - Top Left */}
+                    {getPopularityBadge(product) && (
+                      <div className="absolute top-3 left-3 z-20">
+                        {getPopularityBadge(product)}
+                      </div>
+                    )}
+
+                    {/* Category Badge - Top Right */}
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-2 py-1 rounded-full text-xs font-medium capitalize shadow-sm">
+                        {product.category}
+                      </span>
                     </div>
 
-                    {/* Category Badge */}
-                    <div className="absolute top-3 right-3">
-                      <span className="bg-white/90 backdrop-blur-sm text-gray-700 px-2 py-1 rounded-full text-xs font-medium capitalize">
-                        {product.category}
+                    {/* Indicador de clickeable */}
+                    <div className="absolute bottom-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="bg-black/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+                        👆 Click para ver
                       </span>
                     </div>
                   </div>
@@ -335,24 +355,20 @@ export default function PopularProducts() {
                       )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="space-y-2">
-                      <Link
-                        href={`/products/${product.category}/${product.id}`}
-                        className="block w-full bg-pink-100 hover:bg-pink-200 text-pink-700 font-medium py-2 px-4 rounded-md transition-colors text-center text-sm"
-                      >
-                        Ver Detalles
-                      </Link>
-                      <button
-                        onClick={() => shareOnWhatsApp(product)}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm"
-                      >
-                        <span>📱</span>
-                        <span>Comprar por WhatsApp</span>
-                      </button>
-                    </div>
+                    {/* Action Button - Solo WhatsApp ya que la card completa es clickeable */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        shareOnWhatsApp(product);
+                      }}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center space-x-2 text-sm"
+                    >
+                      <span>📱</span>
+                      <span>Comprar por WhatsApp</span>
+                    </button>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -361,6 +377,11 @@ export default function PopularProducts() {
 
       {/* CTA para ver más productos */}
       <div className="text-center mt-12">
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 mb-2">
+            💡 <strong>Tip:</strong> Haz click en cualquier producto para ver más detalles
+          </p>
+        </div>
         <Link
           href="/products"
           className="inline-flex items-center space-x-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"

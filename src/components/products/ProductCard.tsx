@@ -177,7 +177,7 @@ export default function ProductCard({
         {variant === 'catalog' && onFavoriteToggle && (
           <button
             onClick={handleFavoriteClick}
-            className={`absolute top-2 left-2 p-2 rounded-full transition-all duration-200 ${
+            className={`absolute top-2 left-2 p-2 rounded-full transition-all duration-200 z-20 ${
               isFavorite 
                 ? 'bg-red-500 text-white shadow-lg' 
                 : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
@@ -190,23 +190,23 @@ export default function ProductCard({
           </button>
         )}
         
-        {/* Featured Badge */}
+        {/* Featured Badge - Top Right */}
         {product.featured && (
-          <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg z-20">
             ⭐ Destacado
           </div>
         )}
 
-        {/* Inactive Badge */}
+        {/* Inactive Badge - Top Left (solo si no hay favorite button) */}
         {variant === 'dashboard' && !isActive && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg z-20">
             ❌ Inactivo
           </div>
         )}
         
-        {/* Stock Badge */}
+        {/* Stock Badge - Bottom Left */}
         {product.stock === 0 && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+          <div className="absolute bottom-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg z-20">
             Agotado
           </div>
         )}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useCategories } from '@/hooks/useCategories';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -27,6 +28,7 @@ interface ImageFile {
 
 export default function CreateProductPage() {
   const { isLoading, hasAdminAccess } = useUserRole();
+  const { categories, loading: categoriesLoading, getSimpleCategories } = useCategories();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +38,7 @@ export default function CreateProductPage() {
     name: '',
     description: '',
     price: '',
-    category: 'accesorios',
+    category: '',
     stock: '0',
     featured: false,
     materials: '',
@@ -45,14 +47,13 @@ export default function CreateProductPage() {
     careInstructions: ''
   });
 
-  const categories = [
-    { value: 'accesorios', label: 'Accesorios', icon: '🧣', color: 'bg-blue-100 text-blue-800' },
-    { value: 'bolsos', label: 'Bolsos', icon: '👜', color: 'bg-purple-100 text-purple-800' },
-    { value: 'juguetes', label: 'Juguetes', icon: '🧸', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'bebe', label: 'Bebé', icon: '👶', color: 'bg-pink-100 text-pink-800' },
-    { value: 'hogar', label: 'Hogar', icon: '🏠', color: 'bg-green-100 text-green-800' },
-    { value: 'ropa', label: 'Ropa', icon: '👗', color: 'bg-red-100 text-red-800' }
-  ];
+  // Obtener categorías simplificadas para el formulario
+  const simpleCategories = getSimpleCategories();
+
+  // Establecer la primera categoría como valor por defecto cuando se cargan
+  if (simpleCategories.length > 0 && !form.category) {
+    setForm(prev => ({ ...prev, category: simpleCategories[0].value }));
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -177,7 +178,7 @@ export default function CreateProductPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || categoriesLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center">
         <div className="text-center">
@@ -199,6 +200,30 @@ export default function CreateProductPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Acceso Denegado</h1>
           <p className="text-gray-900">No tienes permisos para acceder a esta página.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Verificar si hay categorías disponibles
+  if (simpleCategories.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center">
+          <span className="text-6xl mb-4 block">📂</span>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No hay categorías disponibles
+          </h3>
+          <p className="text-gray-900 mb-6">
+            Primero necesitas crear al menos una categoría para poder crear productos
+          </p>
+          <button
+            onClick={() => router.push('/dashboard/categories')}
+            className="inline-flex items-center space-x-2 bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+          >
+            <span>📂</span>
+            <span>Ir a Categorías</span>
+          </button>
         </div>
       </div>
     );
@@ -251,12 +276,23 @@ export default function CreateProductPage() {
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 transition-all duration-200 hover:border-gray-400"
                   >
-                    {categories.map(cat => (
-                      <option key={cat.value} value={cat.value}>
-                        {cat.icon} {cat.label}
+                    {simpleCategories.length > 0 ? (
+                      simpleCategories.map(cat => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.icon} {cat.label}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        No hay categorías disponibles
                       </option>
-                    ))}
+                    )}
                   </select>
+                  {simpleCategories.length === 0 && (
+                    <p className="text-sm text-amber-600">
+                      💡 Primero crea una categoría en el dashboard de categorías
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">

@@ -10,6 +10,7 @@ interface Category {
   name: string;
   icon: string;
   productCount: number;
+  slug?: string; // Added slug for consistency with other parts of the code
 }
 
 interface CategoriesResponse {
@@ -152,7 +153,7 @@ export default function ProductsPage() {
 
   const getCurrentCategoryName = () => {
     if (selectedCategory === 'all') return 'Todos los Productos';
-    const category = categories.find(cat => cat.id === selectedCategory);
+    const category = categories.find(cat => (cat.slug || cat.id) === selectedCategory);
     return category?.name || 'Categoría';
   };
 
@@ -265,9 +266,9 @@ export default function ProductsPage() {
                   Array.isArray(categories) && categories.map((category) => (
                     <button
                       key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
+                      onClick={() => setSelectedCategory(category.slug || category.id)}
                       className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between ${
-                        selectedCategory === category.id
+                        selectedCategory === (category.slug || category.id)
                           ? 'bg-pink-100 text-pink-700 border-2 border-pink-300'
                           : 'hover:bg-gray-50 text-gray-700'
                       }`}
