@@ -5,24 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-interface ProductImage {
-  id: string;
-  url: string;
-  altText?: string;
-  isMain: boolean;
-  order: number;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  category: string;
-  stock: number;
-  featured: boolean;
-  images: ProductImage[];
-}
+import { Product, ProductImage } from '@/hooks/useProducts';
 
 interface ProductCardProps {
   product: Product;
@@ -112,7 +95,7 @@ export default function ProductCard({
   };
 
   const cardContent = (
-    <div className={`group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 ${!isActive && variant === 'dashboard' ? 'opacity-60' : ''}`}>
+    <div className={`group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 ${!isActive && variant === 'dashboard' ? 'opacity-60 border-red-200' : ''}`}>
       
       {/* Image Container with Gallery */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
@@ -213,6 +196,13 @@ export default function ProductCard({
             ⭐ Destacado
           </div>
         )}
+
+        {/* Inactive Badge */}
+        {variant === 'dashboard' && !isActive && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
+            ❌ Inactivo
+          </div>
+        )}
         
         {/* Stock Badge */}
         {product.stock === 0 && (
@@ -264,21 +254,27 @@ export default function ProductCard({
               {onToggleActive && (
                 <button
                   onClick={handleToggleActiveClick}
-                  className={`p-2 rounded-lg transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg transition-colors text-sm font-medium ${
                     isActive 
-                      ? 'text-green-600 hover:bg-green-50' 
-                      : 'text-red-600 hover:bg-red-50'
+                      ? 'text-red-600 hover:bg-red-50 border border-red-200 hover:border-red-300' 
+                      : 'text-green-600 hover:bg-green-50 border border-green-200 hover:border-green-300'
                   }`}
                   aria-label={isActive ? 'Desactivar producto' : 'Activar producto'}
                 >
                   {isActive ? (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <>
+                      <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636" />
+                      </svg>
+                      Desactivar
+                    </>
                   ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <>
+                      <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Activar
+                    </>
                   )}
                 </button>
               )}

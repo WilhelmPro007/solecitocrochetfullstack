@@ -1,97 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useProducts, Product } from '@/hooks/useProducts';
 import Link from 'next/link';
 import ProductCard from '@/components/products/ProductCard';
+import ConfirmationModal from '@/components/products/ConfirmationModal';
 
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  category: string;
-  stock: number;
-  isActive: boolean;
-  featured: boolean;
-  materials?: string;
-  dimensions?: string;
-  weight?: string;
-  careInstructions?: string;
-  images: ProductImage[];
-  creator?: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ProductImage {
-  id: string;
-  url: string;
-  altText?: string;
-  isMain: boolean;
-  order: number;
-}
+// Las interfaces están definidas en el hook useProducts
 
 export default function ProductsManagementPage() {
   const { isLoading, hasAdminAccess } = useUserRole();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
-  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [deactivateAction, setDeactivateAction] = useState<'activate' | 'deactivate'>('deactivate');
+  
+  const { products, loading, error, fetchProducts, updateProductStatus } = useProducts(filter);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filter]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (filter !== 'all') {
-        params.append('active', filter);
-      }
-      
-      const response = await fetch(`/api/products?${params}`);
-      const data = await response.json();
-      
-      if (response.ok) {
-        setProducts(data);
-      } else {
-        setError(data.error || 'Error al cargar productos');
-      }
-    } catch (error) {
-      setError('Error de conexión');
-    } finally {
-      setLoading(false);
-    }
+  const openDeactivateModal = (product: Product, action: 'activate' | 'deactivate') => {
+    setSelectedProduct(product);
+    setDeactivateAction(action);
+    setShowDeactivateModal(true);
   };
 
+  const closeDeactivateModal = () => {
+    setShowDeactivateModal(false);
+    setSelectedProduct(null);
+  };
 
-
-  const handleToggleActive = async (productId: string, currentStatus: boolean) => {
+  const confirmToggleActive = async () => {
+    if (!selectedProduct) return;
+    
     try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          isActive: !currentStatus
-        })
-      });
-
-      if (response.ok) {
-        fetchProducts();
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Error al actualizar producto');
-      }
+      await updateProductStatus(selectedProduct.id, !selectedProduct.isActive);
+      setSuccess(`Producto ${selectedProduct.isActive ? 'desactivado' : 'activado'} exitosamente`);
+      setTimeout(() => setSuccess(''), 3000);
+      closeDeactivateModal();
     } catch (error) {
-      setError('Error de conexión');
+      console.error('Error al actualizar producto:', error);
     }
   };
 
@@ -139,13 +87,33 @@ export default function ProductsManagementPage() {
               Administra el catálogo de productos de Solecito Crochet
             </p>
           </div>
-          <Link
-            href="/dashboard/products/create"
-            className="mt-4 md:mt-0 inline-flex items-center space-x-2 bg-pink-400 hover:bg-pink-500 text-white font-medium py-2 px-4 rounded-md transition-colors"
-          >
-            <span>➕</span>
-            <span>Nuevo Producto</span>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
+            <button
+              onClick={() => {
+                if (!Array.isArray(products)) return;
+                const inactiveProducts = products.filter(p => !p.isActive);
+                if (inactiveProducts.length > 0) {
+                  // Mostrar modal para activar productos inactivos
+                  setSelectedProduct(inactiveProducts[0]);
+                  setDeactivateAction('activate');
+                  setShowDeactivateModal(true);
+                }
+              }}
+              disabled={!Array.isArray(products) || products.filter(p => !p.isActive).length === 0}
+              className="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md transition-colors"
+              title={!Array.isArray(products) || products.filter(p => !p.isActive).length === 0 ? 'No hay productos inactivos' : 'Activar productos inactivos'}
+            >
+              <span>✅</span>
+              <span>Activar Inactivos ({Array.isArray(products) ? products.filter(p => !p.isActive).length : 0})</span>
+            </button>
+            <Link
+              href="/dashboard/products/create"
+              className="inline-flex items-center space-x-2 bg-pink-400 hover:bg-pink-500 text-white font-medium py-2 px-4 rounded-md transition-colors"
+            >
+              <span>➕</span>
+              <span>Nuevo Producto</span>
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}
@@ -172,6 +140,13 @@ export default function ProductsManagementPage() {
           </div>
         </div>
 
+        {/* Success Message */}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6">
+            {success}
+          </div>
+        )}
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
@@ -189,6 +164,23 @@ export default function ProductsManagementPage() {
               </svg>
             </div>
             <p className="text-gray-900">Cargando productos...</p>
+          </div>
+        ) : !Array.isArray(products) ? (
+          <div className="text-center py-12">
+            <span className="text-6xl mb-4 block">⚠️</span>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Error en los datos
+            </h3>
+            <p className="text-gray-900 mb-6">
+              Los productos no se cargaron correctamente
+            </p>
+            <button
+              onClick={fetchProducts}
+              className="inline-flex items-center space-x-2 bg-pink-400 hover:bg-pink-500 text-white font-medium py-3 px-6 rounded-md transition-colors"
+            >
+              <span>🔄</span>
+              <span>Reintentar</span>
+            </button>
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
@@ -209,18 +201,40 @@ export default function ProductsManagementPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {Array.isArray(products) && products.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
                 variant="dashboard"
                 onEdit={(id) => window.location.href = `/dashboard/products/edit/${id}`}
-                onToggleActive={handleToggleActive}
+                onToggleActive={(id, status) => openDeactivateModal(product, status ? 'deactivate' : 'activate')}
                 isActive={product.isActive}
               />
             ))}
           </div>
         )}
+
+        {/* Modal de Confirmación */}
+        <ConfirmationModal
+          isOpen={showDeactivateModal}
+          onClose={closeDeactivateModal}
+          onConfirm={confirmToggleActive}
+          title={
+            deactivateAction === 'deactivate' 
+              ? 'Desactivar Producto' 
+              : 'Activar Producto'
+          }
+          message={
+            deactivateAction === 'deactivate'
+              ? `¿Estás seguro de que quieres desactivar "${selectedProduct?.name}"? Este producto no será visible para los clientes.`
+              : `¿Estás seguro de que quieres activar "${selectedProduct?.name}"? Este producto será visible para los clientes.`
+          }
+          confirmText={
+            deactivateAction === 'deactivate' ? 'Desactivar' : 'Activar'
+          }
+          cancelText="Cancelar"
+          type={deactivateAction === 'deactivate' ? 'warning' : 'info'}
+        />
     </>
   );
 } 

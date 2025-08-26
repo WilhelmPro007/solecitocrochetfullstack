@@ -89,12 +89,7 @@ export default function PopularProducts() {
   if (loading) {
     return (
       <section id="productos" className="px-6 pb-24">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Descubre los productos más especiales de nuestra colección, seleccionados especialmente para ti
-          </p>
-        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white dark:bg-gray-100 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-300 animate-pulse">
@@ -114,12 +109,7 @@ export default function PopularProducts() {
   if (products.length === 0) {
     return (
       <section id="productos" className="px-6 pb-24">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Descubre los productos más especiales de nuestra colección, seleccionados especialmente para ti
-          </p>
-        </div>
+        
         <div className="text-center py-12">
           <span className="text-6xl mb-4 block">🎀</span>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -146,12 +136,7 @@ export default function PopularProducts() {
 
   return (
     <section id="productos" className="px-6 pb-24">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Descubre los productos más especiales de nuestra colección, seleccionados especialmente para ti
-        </p>
-      </div>
+     
       
       {/* Productos Destacados */}
       {featuredProducts.length > 0 && (

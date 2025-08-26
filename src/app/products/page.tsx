@@ -3,26 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ProductCard from '@/components/products/ProductCard';
-
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  category: string;
-  stock: number;
-  isActive: boolean;
-  featured: boolean;
-  images: ProductImage[];
-}
-
-interface ProductImage {
-  id: string;
-  url: string;
-  altText?: string;
-  isMain: boolean;
-  order: number;
-}
+import { Product, ProductImage } from '@/hooks/useProducts';
 
 interface Category {
   id: string;

@@ -71,6 +71,27 @@ export async function PUT(
     }
 
     const data = await request.json();
+    
+    // Si solo se está actualizando isActive, hacer update simple
+    if (Object.keys(data).length === 1 && 'isActive' in data) {
+      const updatedProduct = await prisma.product.update({
+        where: { id },
+        data: {
+          isActive: Boolean(data.isActive)
+        },
+        include: {
+          images: {
+            orderBy: { order: 'asc' }
+          },
+          creator: {
+            select: { id: true, name: true, email: true }
+          }
+        }
+      });
+      
+      return NextResponse.json(updatedProduct);
+    }
+
     const {
       name,
       description,
@@ -85,7 +106,7 @@ export async function PUT(
       images
     } = data;
 
-    // Actualizar el producto
+    // Actualizar el producto completo
     await prisma.product.update({
       where: { id },
       data: {

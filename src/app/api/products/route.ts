@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const validLimit = Math.min(Math.max(1, limit), 100); // Máximo 100 productos por página
     const offset = (validPage - 1) * validLimit;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     
     if (category && category !== 'all') {
       where.category = category;
@@ -47,17 +47,17 @@ export async function GET(request: NextRequest) {
     const hasPreviousPage = validPage > 1;
 
     // Construir ordenamiento
-    let orderBy: any = {};
+    const orderBy: Record<string, 'asc' | 'desc'> = {};
     switch (sortBy) {
       case 'price':
-        orderBy.price = sortOrder;
+        orderBy.price = sortOrder as 'asc' | 'desc';
         break;
       case 'name':
-        orderBy.name = sortOrder;
+        orderBy.name = sortOrder as 'asc' | 'desc';
         break;
       case 'createdAt':
       default:
-        orderBy.createdAt = sortOrder;
+        orderBy.createdAt = sortOrder as 'asc' | 'desc';
         break;
     }
 
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
         careInstructions,
         createdBy: session.user.id,
         images: {
-          create: images?.map((img: any, index: number) => ({
+          create: images?.map((img: { url: string; altText?: string }, index: number) => ({
             url: img.url,
             altText: img.altText || name,
             isMain: index === 0,
