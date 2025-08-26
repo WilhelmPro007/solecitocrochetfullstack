@@ -1,185 +1,150 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUserRole } from '@/hooks/useUserRole';
-import Image from 'next/image';
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  icon: string;
-  description?: string;
-  isActive: boolean;
-  productCount: number;
-  imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface CategoryFormData {
-  name: string;
-  slug: string;
-  icon: string;
-  description: string;
-  isActive: boolean;
-}
+import { useCategories, Category, CategoryFormData } from '@/hooks/useCategories';
+import CategoryCard from '@/components/products/CategoryCard';
+import CategoryForm from '@/components/products/CategoryForm';
+import CategoryConfirmationModal from '@/components/products/CategoryConfirmationModal';
+import CategoryStats from '@/components/products/CategoryStats';
 
 export default function CategoriesManagementPage() {
   const { isLoading, hasAdminAccess } = useUserRole();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    categories, 
+    loading, 
+    error, 
+    fetchCategories, 
+    createCategory, 
+    updateCategory, 
+    deleteCategory 
+  } = useCategories();
+
+  // Estados del formulario
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState<CategoryFormData>({
-    name: '',
-    slug: '',
-    icon: '🎀',
-    description: '',
-    isActive: true
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (hasAdminAccess) {
-      fetchCategories();
-    }
-  }, [hasAdminAccess]);
+  // Estados del modal de confirmación
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [categoryToAction, setCategoryToAction] = useState<Category | null>(null);
+  const [actionType, setActionType] = useState<'delete' | 'deactivate' | 'activate'>('delete');
 
-  const fetchCategories = async () => {
+  // Estados de feedback
+  const [success, setSuccess] = useState('');
+  const [formError, setFormError] = useState('');
+
+  // Estados de vista
+  const [viewMode, setViewMode] = useState<'list' | 'stats'>('list');
+  const [statsPeriod, setStatsPeriod] = useState<'week' | 'month' | 'year'>('month');
+
+  const handleCreateCategory = async (data: CategoryFormData) => {
     try {
-      setLoading(true);
-      const response = await fetch('/api/categories');
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      name,
-      slug: generateSlug(name)
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const url = editingCategory 
-        ? `/api/categories/${editingCategory.id}`
-        : '/api/categories';
+      setIsSubmitting(true);
+      setFormError('');
       
-      const method = editingCategory ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        await fetchCategories();
-        resetForm();
+      const result = await createCategory(data);
+      if (result) {
+        setSuccess('Categoría creada exitosamente');
         setShowForm(false);
-        alert(editingCategory ? 'Categoría actualizada exitosamente' : 'Categoría creada exitosamente');
+        resetForm();
+        setTimeout(() => setSuccess(''), 3000);
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
+        setFormError('Error al crear la categoría');
       }
     } catch (error) {
-      console.error('Error saving category:', error);
-      alert('Error al guardar la categoría');
+      setFormError('Error al crear la categoría');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateCategory = async (data: CategoryFormData) => {
+    if (!editingCategory) return;
+    
+    try {
+      setIsSubmitting(true);
+      setFormError('');
+      
+      const result = await updateCategory(editingCategory.slug, data);
+      if (result) {
+        setSuccess('Categoría actualizada exitosamente');
+        setShowForm(false);
+        resetForm();
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setFormError('Error al actualizar la categoría');
+      }
+    } catch (error) {
+      setFormError('Error al actualizar la categoría');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEdit = (category: Category) => {
     setEditingCategory(category);
-    setFormData({
-      name: category.name,
-      slug: category.slug,
-      icon: category.icon,
-      description: category.description || '',
-      isActive: category.isActive
-    });
     setShowForm(true);
   };
 
-  const handleDelete = async (categoryId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta categoría? Esta acción no se puede deshacer.')) {
-      return;
-    }
+  const handleDelete = (category: Category) => {
+    setCategoryToAction(category);
+    setActionType('delete');
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!categoryToAction) return;
 
     try {
-      const response = await fetch(`/api/categories/${categoryId}`, {
-        method: 'DELETE',
-      });
+      let success = false;
+      
+      switch (actionType) {
+        case 'delete':
+          success = await deleteCategory(categoryToAction.slug);
+          if (success) {
+            setSuccess('Categoría eliminada exitosamente');
+          }
+          break;
+        // Aquí se pueden agregar más acciones en el futuro
+      }
 
-      if (response.ok) {
-        await fetchCategories();
-        alert('Categoría eliminada exitosamente');
-      } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
+      if (success) {
+        setShowConfirmationModal(false);
+        setCategoryToAction(null);
+        setTimeout(() => setSuccess(''), 3000);
       }
     } catch (error) {
-      console.error('Error deleting category:', error);
-      alert('Error al eliminar la categoría');
+      console.error('Error executing action:', error);
     }
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      slug: '',
-      icon: '🎀',
-      description: '',
-      isActive: true
-    });
     setEditingCategory(null);
+    setFormError('');
   };
 
-  const iconOptions = [
-    '🎀', '🧣', '👜', '🧸', '👶', '🏠', '👗', '🐰', '🛏️', '🧺', '🏺', '🪑', '🟫',
-    '🌸', '🌺', '🌷', '🌹', '🌻', '🌼', '💐', '🎁', '🎈', '🎉', '✨', '💎', '🔮'
-  ];
+  const openCreateForm = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    resetForm();
+  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Cargando...</p>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-200 rounded-full mb-4">
+            <svg className="animate-spin h-8 w-8 text-pink-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <p className="text-gray-900">Cargando...</p>
         </div>
       </div>
     );
@@ -187,187 +152,153 @@ export default function CategoriesManagementPage() {
 
   if (!hasAdminAccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Acceso Denegado</h1>
-          <p className="text-gray-600">No tienes permisos para acceder a esta página.</p>
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center">
+          <span className="text-6xl mb-4 block">🔒</span>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Acceso Denegado
+          </h3>
+          <p className="text-gray-900">
+            Solo los administradores pueden acceder a esta página
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Gestión de Categorías 📂</h1>
-          <p className="text-lg text-gray-600">Administra las categorías de productos de Solecito Crochet</p>
+    <>
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Gestión de Categorías 📂
+          </h1>
+          <p className="text-gray-900">
+            Administra las categorías de productos de Solecito Crochet
+          </p>
         </div>
-
-        {/* Botón para crear nueva categoría */}
-        <div className="mb-6 text-center">
+        <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
           <button
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
+            onClick={openCreateForm}
             className="inline-flex items-center space-x-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <span>➕</span>
             <span>Nueva Categoría</span>
           </button>
         </div>
+      </div>
 
-        {/* Formulario de categoría */}
-        {showForm && (
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                {editingCategory ? 'Editar Categoría' : 'Crear Nueva Categoría'}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+      {/* Formulario de categoría */}
+      {showForm && (
+        <div className="mb-8">
+          <CategoryForm
+            category={editingCategory}
+            onSubmit={editingCategory ? handleUpdateCategory : handleCreateCategory}
+            onCancel={closeForm}
+            isSubmitting={isSubmitting}
+          />
+        </div>
+      )}
+
+      {/* Mensajes de feedback */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6">
+          <div className="flex items-center space-x-2">
+            <span>✅</span>
+            <span>{success}</span>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+          <div className="flex items-center space-x-2">
+            <span>❌</span>
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
+
+      {formError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+          <div className="flex items-center space-x-2">
+            <span>⚠️</span>
+            <span>{formError}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Selector de vista */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-pink-500 text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-pink-50 border border-gray-200'
+              }`}
+            >
+              <span className="mr-2">📋</span>
+              Lista de Categorías
+            </button>
+            <button
+              onClick={() => setViewMode('stats')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                viewMode === 'stats'
+                  ? 'bg-pink-500 text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-pink-50 border border-gray-200'
+              }`}
+            >
+              <span className="mr-2">📊</span>
+              Estadísticas
+            </button>
+          </div>
+
+          {viewMode === 'stats' && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700">Período:</span>
+              <select
+                value={statsPeriod}
+                onChange={(e) => setStatsPeriod(e.target.value as 'week' | 'month' | 'year')}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
               >
-                ✕
-              </button>
+                <option value="week">Esta Semana</option>
+                <option value="month">Este Mes</option>
+                <option value="year">Este Año</option>
+              </select>
             </div>
+          )}
+        </div>
+      </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Nombre de la Categoría <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleNameChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                    placeholder="Ej: Accesorios para Bebé"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Slug (URL) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="slug"
-                    value={formData.slug}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                    placeholder="ej-accesorios-bebe"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Icono <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="icon"
-                    value={formData.icon}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900"
-                  >
-                    {iconOptions.map((icon) => (
-                      <option key={icon} value={icon}>
-                        {icon} {icon === formData.icon ? 'Seleccionado' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Estado
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleInputChange}
-                      className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
-                    />
-                    <span className="text-sm text-gray-700">
-                      {formData.isActive ? 'Activa' : 'Inactiva'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Descripción
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  placeholder="Descripción opcional de la categoría..."
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    resetForm();
-                  }}
-                  className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  {editingCategory ? 'Actualizar Categoría' : 'Crear Categoría'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Lista de categorías */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 bg-gradient-to-r from-pink-500 to-rose-500">
-            <h2 className="text-xl font-semibold text-white">Categorías Existentes</h2>
-          </div>
-          
+      {/* Contenido según la vista seleccionada */}
+      {viewMode === 'list' ? (
+        /* Vista de lista de categorías */
+        <>
           {loading ? (
-            <div className="p-6 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Cargando categorías...</p>
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-200 rounded-full mb-4">
+                <svg className="animate-spin h-8 w-8 text-pink-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+              <p className="text-gray-900">Cargando categorías...</p>
             </div>
           ) : categories.length === 0 ? (
-            <div className="p-12 text-center">
+            <div className="text-center py-12">
               <span className="text-6xl mb-4 block">📂</span>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 No hay categorías creadas
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-900 mb-6">
                 Crea tu primera categoría para organizar los productos
               </p>
               <button
-                onClick={() => {
-                  resetForm();
-                  setShowForm(true);
-                }}
+                onClick={openCreateForm}
                 className="inline-flex items-center space-x-2 bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
               >
                 <span>➕</span>
@@ -375,78 +306,35 @@ export default function CategoriesManagementPage() {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Categoría
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Productos
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estado
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {categories.map((category) => (
-                    <tr key={category.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-2xl">{category.icon}</span>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {category.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {category.slug}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {category.productCount} producto{category.productCount !== 1 ? 's' : ''}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          category.isActive
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {category.isActive ? 'Activa' : 'Inactiva'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleEdit(category)}
-                            className="text-blue-600 hover:text-blue-900 transition-colors"
-                          >
-                            ✏️ Editar
-                          </button>
-                          <button
-                            onClick={() => handleDelete(category.id)}
-                            className="text-red-600 hover:text-red-900 transition-colors"
-                          >
-                            🗑️ Eliminar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  variant="dashboard"
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
             </div>
           )}
-        </div>
-      </div>
-    </div>
+        </>
+      ) : (
+        /* Vista de estadísticas */
+        <CategoryStats period={statsPeriod} />
+      )}
+
+      {/* Modal de confirmación */}
+      <CategoryConfirmationModal
+        isOpen={showConfirmationModal}
+        onClose={() => {
+          setShowConfirmationModal(false);
+          setCategoryToAction(null);
+        }}
+        onConfirm={handleConfirmAction}
+        category={categoryToAction}
+        action={actionType}
+      />
+    </>
   );
 } 
