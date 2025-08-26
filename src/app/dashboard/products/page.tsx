@@ -88,24 +88,7 @@ export default function ProductsManagementPage() {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
-            <button
-              onClick={() => {
-                if (!Array.isArray(products)) return;
-                const inactiveProducts = products.filter(p => !p.isActive);
-                if (inactiveProducts.length > 0) {
-                  // Mostrar modal para activar productos inactivos
-                  setSelectedProduct(inactiveProducts[0]);
-                  setDeactivateAction('activate');
-                  setShowDeactivateModal(true);
-                }
-              }}
-              disabled={!Array.isArray(products) || products.filter(p => !p.isActive).length === 0}
-              className="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-md transition-colors"
-              title={!Array.isArray(products) || products.filter(p => !p.isActive).length === 0 ? 'No hay productos inactivos' : 'Activar productos inactivos'}
-            >
-              <span>✅</span>
-              <span>Activar Inactivos ({Array.isArray(products) ? products.filter(p => !p.isActive).length : 0})</span>
-            </button>
+            
             <Link
               href="/dashboard/products/create"
               className="inline-flex items-center space-x-2 bg-pink-400 hover:bg-pink-500 text-white font-medium py-2 px-4 rounded-md transition-colors"

@@ -95,7 +95,7 @@ export default function ProductCard({
   };
 
   const cardContent = (
-    <div className={`group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 ${!isActive && variant === 'dashboard' ? 'opacity-60 border-red-200' : ''}`}>
+    <div className={`group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 ${!isActive && variant === 'dashboard' ? 'opacity-90 border-red-900 border-4' : ''}`}>
       
       {/* Image Container with Gallery */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
@@ -213,7 +213,7 @@ export default function ProductCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className={`p-4 ${!isActive && variant === 'dashboard' ? 'bg-pink-100' : ''}`}>
         {/* Category */}
         <div className="text-xs text-blue-600 font-medium mb-1 capitalize">
           {product.category}
