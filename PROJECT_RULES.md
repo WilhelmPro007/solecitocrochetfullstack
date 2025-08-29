@@ -81,31 +81,6 @@ return res.status(200).json({
 - Separar comandos (mutaciones) de queries (consultas)
 - Usar DTOs para entrada y salida
 
-## 🔄 Lógica de Negocio
-
-### ✅ Sistema de Estados Reutilizable
-- **Usar RequestStatusEnum** para todos los módulos
-- **Usar RequestStatusValidationService** para validaciones
-- **NO duplicar lógica** de validación de estados
-- Estados coherentes: `PENDING` → `ACTIVE` → `FINISHED`
-
-### ✅ Vacaciones
-- **No modificar fecha de inicio** en ningún módulo
-- Respetar cálculo de días con factor 0.0833
-- Manejar reversión y recálculo en ediciones
-- Registrar movimientos en historial de vacaciones
-
-### ✅ Estados de Solicitudes
-- **PENDING**: No editable
-- **ACTIVE**: Solo extender fecha fin
-- **FINISHED**: Solo motivo
-- **CANCELLED**: No editable
-
-### ✅ Casos de Edición
-1. **Pasado**: Solo editar motivo
-2. **En curso**: Solo extender fecha de fin
-3. **Futuro**: Modificar fechas y motivo libremente
-
 ## 🚀 Checklist para Nuevas Funcionalidades
 
 ### ✅ Antes de Implementar

@@ -1,277 +1,846 @@
-# ??? Arquitectura del Sistema - API Solecito Crochet
+# 🏗️ Arquitectura del Sistema - Solecito Crochet
 
-## ?? Visi�n General
+## 📋 Descripción General
 
-La API de Solecito Crochet est� construida siguiendo una arquitectura moderna y escalable, utilizando Next.js 15 con el patr�n App Router, Prisma ORM para la gesti�n de base de datos, y un sistema de jobs as�ncrono para procesamiento en segundo plano.
-
-## ??? Arquitectura General
-
-```mermaid
-graph TB
-    A[Cliente Web/M�vil] --> B[Next.js API Routes]
-    B --> C[Middleware de Autenticaci�n]
-    C --> D[Controladores de Ruta]
-    D --> E[Casos de Uso]
-    E --> F[Repositorios Prisma]
-    F --> G[(PostgreSQL)]
-    
-    H[Sistema de Jobs] --> I[Colas en Memoria]
-    I --> J[Procesamiento As�ncrono]
-    J --> F
-    
-    K[Cron Jobs] --> L[C�lculos Diarios]
-    L --> F
-```
-
-## ?? Estructura del Proyecto
-
-```
-src/
-+-- app/                    # Next.js App Router
-�   +-- api/               # API Routes
-�   �   +-- auth/         # Autenticaci�n
-�   �   +-- products/     # Productos
-�   �   +-- categories/   # Categor�as
-�   �   +-- images/       # Im�genes
-�   �   +-- admin/        # Administraci�n
-�   +-- dashboard/        # Panel administrativo
-�   +-- login/           # P�ginas de login
-+-- components/           # Componentes React
-+-- lib/                 # Utilidades y configuraci�n
-�   +-- auth.ts          # Configuraci�n NextAuth
-�   +-- popularity.ts    # Sistema de popularidad
-�   +-- simpleJobScheduler.ts # Jobs as�ncronos
-+-- domain/              # L�gica de dominio
-�   +-- entities/        # Entidades del negocio
-�   +-- utils/           # Utilidades de dominio
-+-- infrastructure/      # Capa de infraestructura
-�   +-- prisma/          # Repositorios Prisma
-+-- types/               # Definiciones TypeScript
-```
-
-## ?? Tecnolog�as Principales
-
-### Framework y Runtime
-- **Next.js 15**: Framework React full-stack con App Router
-- **React 19**: Librer�a de UI con Server Components
-- **TypeScript 5**: Tipado est�tico para mayor robustez
-
-### Base de Datos
-- **PostgreSQL 15+**: Base de datos relacional robusta
-- **Prisma 6.10**: ORM moderno con migraciones autom�ticas
-
-### Autenticaci�n y Seguridad
-- **NextAuth.js 4.24**: Autenticaci�n completa con JWT
-- **bcryptjs**: Encriptaci�n de contrase�as
-- **Roles**: CLIENTE, ADMIN, SUPERADMIN
-
-### Procesamiento As�ncrono
-- **node-cron**: Jobs programados
-- **Colas en memoria**: Procesamiento de jobs sin Redis
-- **Sistema de m�tricas**: C�lculos autom�ticos de popularidad
-
-## ??? Modelo de Datos
-
-### Entidades Principales
-
-#### Usuario (User)
-```typescript
-{
-  id: string
-  name?: string
-  email: string (�nico)
-  password: string (encriptada)
-  role: UserRole (CLIENTE | ADMIN | SUPERADMIN)
-  accounts: Account[]
-  sessions: Session[]
-  products: Product[]
-}
-```
-
-#### Producto (Product)
-```typescript
-{
-  id: string
-  name: string
-  description?: string
-  price: number
-  category: string
-  categoryId?: string
-  stock: number
-  isActive: boolean
-  featured: boolean
-  materials?: string
-  dimensions?: string
-  weight?: string
-  careInstructions?: string
-  images: ProductImage[]
-  creator: User
-  popularity: PopularityMetric
-}
-```
-
-#### Categor�a (Category)
-```typescript
-{
-  id: string
-  name: string (�nico)
-  slug: string (�nico)
-  icon: string
-  description?: string
-  isActive: boolean
-  isCustom: boolean
-  products: Product[]
-}
-```
-
-## ?? Sistema de Popularidad
-
-### Algoritmos de Scoring
-
-#### Popularidad General
-```typescript
-popularityScore = 
-  (weeklyClicks � 0.4) + 
-  (monthlyClicks � 0.3) + 
-  (whatsappClicks � 2.0) + 
-  (favoriteClicks � 1.5) + 
-  (totalClicks � 0.1)
-```
-
-#### Productos Destacados
-```typescript
-featuredScore = 
-  (whatsappClicks � 3.0) + 
-  (favoriteClicks � 1.0) + 
-  (weeklyClicks � 0.5) + 
-  (monthlyClicks � 0.3)
-```
-
-### Clasificaci�n Autom�tica
-- **Top 20%** ? Productos Populares
-- **Top 15%** ? Productos Destacados
-- **Reset peri�dico**: Semanal, mensual, anual
-
-## ?? Sistema de Jobs As�ncronos
-
-### Tipos de Jobs
-1. **Popularity**: C�lculo de m�tricas de popularidad
-2. **Featured**: Evaluaci�n para productos destacados
-3. **Classification**: Clasificaci�n autom�tica
-
-### Programaci�n
-- **Diaria**: 6:00 AM (hora Nicaragua)
-- **Manual**: Desde panel administrativo
-- **Por producto**: Triggers autom�ticos
-
-## ?? Seguridad
-
-### Autenticaci�n
-- JWT con NextAuth.js
-- Sesiones seguras
-- Protecci�n CSRF
-
-### Autorizaci�n
-- Middleware de validaci�n de roles
-- Verificaci�n en cada endpoint protegido
-- Logs de acceso
-
-### Validaci�n
-- Validaci�n de entrada en controladores
-- Sanitizaci�n de datos
-- L�mites de rate limiting
-
-## ?? Rendimiento
-
-### Optimizaciones
-- **Paginaci�n**: skip/take eficiente
-- **Cache**: Headers HTTP apropiados
-- **Queries**: Optimizadas con select
-- **Im�genes**: Compresi�n autom�tica
-
-### M�tricas de Performance
-- Tiempo de respuesta < 200ms
-- Throughput de 1000+ req/min
-- Cache hit rate > 80%
-
-## ?? Escalabilidad
-
-### Estrategias
-- **Horizontal**: M�ltiples instancias
-- **Vertical**: Optimizaci�n de recursos
-- **Cache**: Redis para sesiones
-- **CDN**: Para im�genes est�ticas
-
-### L�mites Actuales
-- **Jobs**: Procesamiento en memoria
-- **Im�genes**: Almacenamiento en DB
-- **Sesiones**: Sin Redis clustering
-
-## ?? Ciclo de Vida de una Solicitud
-
-```mermaid
-sequenceDiagram
-    participant C as Cliente
-    participant M as Middleware
-    participant R as Route Handler
-    participant U as Use Case
-    participant P as Prisma Repo
-    participant DB as PostgreSQL
-
-    C->>M: HTTP Request
-    M->>M: Validar autenticaci�n
-    M->>R: Request v�lido
-    R->>U: Ejecutar l�gica
-    U->>P: Consultar datos
-    P->>DB: Query SQL
-    DB->>P: Resultados
-    P->>U: Datos procesados
-    U->>R: Respuesta
-    R->>C: HTTP Response
-```
-
-## ?? Testing
-
-### Estrategias
-- **Unit Tests**: Funciones utilitarias
-- **Integration Tests**: API endpoints
-- **E2E Tests**: Flujos completos
-
-### Herramientas
-- **Jest**: Framework de testing
-- **Supertest**: Testing de API
-- **Prisma Test**: Base de datos de test
-
-## ?? Checklist de Arquitectura
-
-### ? Principios Seguidos
-- [x] Separaci�n de responsabilidades
-- [x] Inyecci�n de dependencias
-- [x] Principio de responsabilidad �nica
-- [x] Abierto/cerrado principle
-
-### ? Patrones Implementados
-- [x] Repository Pattern
-- [x] Strategy Pattern (jobs)
-- [x] Observer Pattern (cron jobs)
-- [x] Factory Pattern (productos)
-
-### ? Mejores Pr�cticas
-- [x] Error handling consistente
-- [x] Logging estructurado
-- [x] Validaci�n de entrada
-- [x] Documentaci�n completa
+Esta documentación describe la arquitectura completa del sistema Solecito Crochet, incluyendo la estructura del proyecto, patrones de diseño, tecnologías utilizadas y estrategias de implementación.
 
 ---
 
-## ?? Conclusiones
+## 🎯 Visión de Arquitectura
 
-Esta arquitectura proporciona:
+### Principios de Diseño
 
-1. **Escalabilidad**: F�cil de escalar horizontalmente
-2. **Mantenibilidad**: C�digo organizado y documentado
-3. **Performance**: Optimizaciones en todos los niveles
-4. **Seguridad**: M�ltiples capas de protecci�n
-5. **Flexibilidad**: F�cil agregar nuevas funcionalidades
+- **Clean Architecture**: Separación clara de responsabilidades
+- **Domain-Driven Design**: Lógica de negocio centrada en el dominio
+- **SOLID Principles**: Principios de diseño de software robusto
+- **Microservices Ready**: Preparado para escalabilidad horizontal
+- **Performance First**: Optimización desde el diseño inicial
 
-La arquitectura est� preparada para crecer con el negocio y adaptarse a nuevos requisitos sin comprometer la estabilidad del sistema existente.
+---
+
+## 🏛️ Arquitectura General
+
+### Diagrama de Alto Nivel
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        Web[Web App - Next.js]
+        Mobile[Mobile App - React Native]
+        Admin[Admin Dashboard]
+    end
+    
+    subgraph "API Gateway"
+        NextJS[Next.js App Router]
+        Auth[NextAuth.js]
+        Middleware[Middleware & Guards]
+    end
+    
+    subgraph "Business Logic Layer"
+        UseCases[Use Cases]
+        Services[Domain Services]
+        Validators[Validators]
+    end
+    
+    subgraph "Data Layer"
+        Prisma[Prisma ORM]
+        PostgreSQL[(PostgreSQL)]
+        Cache[Cache Layer]
+    end
+    
+    subgraph "External Services"
+        Email[Email Service]
+        Storage[File Storage]
+        Analytics[Analytics]
+    end
+    
+    Web --> NextJS
+    Mobile --> NextJS
+    Admin --> NextJS
+    NextJS --> Auth
+    NextJS --> Business Logic Layer
+    Business Logic Layer --> Data Layer
+    Data Layer --> External Services
+```
+
+### Capas de la Arquitectura
+
+#### 1. Presentation Layer
+- **Next.js App Router**: Páginas y componentes
+- **API Routes**: Endpoints de la API
+- **Middleware**: Autenticación y autorización
+- **Components**: UI reutilizables
+
+#### 2. Application Layer
+- **Use Cases**: Casos de uso de la aplicación
+- **DTOs**: Objetos de transferencia de datos
+- **Validators**: Validación de entrada
+- **Orchestrators**: Coordinación de servicios
+
+#### 3. Domain Layer
+- **Entities**: Entidades del dominio
+- **Interfaces**: Contratos y abstracciones
+- **Domain Services**: Lógica de negocio
+- **Value Objects**: Objetos de valor
+
+#### 4. Infrastructure Layer
+- **Prisma**: ORM y acceso a datos
+- **External APIs**: Servicios externos
+- **File Storage**: Almacenamiento de archivos
+- **Caching**: Sistema de cache
+
+---
+
+## 🗂️ Estructura del Proyecto
+
+### Organización de Directorios
+
+```
+src/
+├── app/                    # App Router de Next.js 15
+│   ├── api/               # Endpoints de la API
+│   │   ├── auth/          # Autenticación
+│   │   ├── products/      # Gestión de productos
+│   │   ├── categories/    # Sistema de categorías
+│   │   ├── images/        # Gestión de imágenes
+│   │   └── admin/         # Panel administrativo
+│   ├── dashboard/         # Panel administrativo
+│   └── products/          # Páginas de productos
+├── components/            # Componentes reutilizables
+│   ├── admin/            # Componentes administrativos
+│   ├── auth/             # Componentes de autenticación
+│   ├── products/         # Componentes de productos
+│   └── ui/               # Componentes de UI genéricos
+├── domain/               # Lógica de negocio
+│   ├── entities/         # Entidades del dominio
+│   ├── interfaces/       # Contratos/interfaces
+│   └── utils/            # Utilidades del dominio
+├── application/          # Casos de uso
+│   ├── dtos/            # Objetos de transferencia de datos
+│   └── usecases/        # Casos de uso de la aplicación
+├── infrastructure/       # Implementaciones técnicas
+│   └── prisma/          # Implementación de Prisma
+├── hooks/               # Hooks personalizados de React
+├── lib/                 # Utilidades y configuración
+├── providers/           # Proveedores de contexto
+├── services/            # Servicios de la aplicación
+├── types/               # Tipos de TypeScript
+└── utils/               # Utilidades generales
+```
+
+### Patrones Arquitectónicos
+
+#### Clean Architecture
+```
+┌─────────────────────────────────────┐
+│           Presentation Layer        │ ← API Routes, Components
+├─────────────────────────────────────┤
+│           Application Layer         │ ← Use Cases, DTOs
+├─────────────────────────────────────┤
+│             Domain Layer            │ ← Entities, Interfaces
+├─────────────────────────────────────┤
+│         Infrastructure Layer        │ ← Prisma, External APIs
+└─────────────────────────────────────┘
+```
+
+#### Repository Pattern
+```typescript
+// Interface del repositorio
+interface IUserRepository {
+  create(user: User): Promise<User>;
+  findByEmail(email: string): Promise<User | null>;
+  findById(id: string): Promise<User | null>;
+  update(id: string, data: Partial<User>): Promise<User>;
+  delete(id: string): Promise<void>;
+}
+
+// Implementación con Prisma
+export class PrismaUserRepository implements IUserRepository {
+  async create(user: User): Promise<User> {
+    return await prisma.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        role: user.role as UserRole
+      }
+    });
+  }
+  
+  // ... otros métodos
+}
+```
+
+#### Use Case Pattern
+```typescript
+export class RegisterUser {
+  constructor(private userRepo: IUserRepository) {}
+
+  async execute(data: RegisterUserDTO): Promise<User> {
+    // Validaciones de negocio
+    if (!data.email || !data.password) {
+      throw new Error("Email y password son requeridos");
+    }
+    
+    // Lógica de negocio
+    const existingUser = await this.userRepo.findByEmail(data.email);
+    if (existingUser) {
+      throw new Error("El usuario ya existe");
+    }
+    
+    // Creación del usuario
+    const hashedPassword = await hashPassword(data.password);
+    const user = new User(data.name, data.email, hashedPassword, data.role);
+    
+    return await this.userRepo.create(user);
+  }
+}
+```
+
+---
+
+## 🔐 Sistema de Autenticación
+
+### Arquitectura de NextAuth.js
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NextAuth
+    participant Prisma
+    participant Database
+    
+    Client->>NextAuth: POST /api/auth/signin
+    NextAuth->>Prisma: Buscar usuario por email
+    Prisma->>Database: Query SELECT
+    Database-->>Prisma: Usuario encontrado
+    Prisma-->>NextAuth: Datos del usuario
+    NextAuth->>NextAuth: Verificar contraseña
+    NextAuth->>NextAuth: Generar JWT token
+    NextAuth-->>Client: Token de sesión
+```
+
+### Middleware de Protección
+
+```typescript
+// middleware.ts
+import { withAuth } from 'next-auth/middleware';
+
+export default withAuth(
+  function middleware(req) {
+    // Lógica adicional del middleware
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        // Verificar permisos específicos
+        if (req.nextUrl.pathname.startsWith('/admin')) {
+          return token?.role === 'ADMIN' || token?.role === 'SUPERADMIN';
+        }
+        return !!token;
+      },
+    },
+  }
+);
+
+export const config = {
+  matcher: ['/dashboard/:path*', '/admin/:path*']
+};
+```
+
+---
+
+## 📊 Sistema de Popularidad
+
+### Arquitectura del Algoritmo
+
+```mermaid
+graph LR
+    subgraph "Data Collection"
+        Clicks[Product Clicks]
+        Interactions[User Interactions]
+        TimeData[Temporal Data]
+    end
+    
+    subgraph "Processing Engine"
+        Weekly[Weekly Aggregation]
+        Monthly[Monthly Aggregation]
+        Scoring[Score Calculation]
+    end
+    
+    subgraph "Classification"
+        Popular[Popular Products]
+        Featured[Featured Products]
+        Metrics[Popularity Metrics]
+    end
+    
+    Clicks --> Weekly
+    Interactions --> Monthly
+    TimeData --> Scoring
+    Weekly --> Scoring
+    Monthly --> Scoring
+    Scoring --> Classification
+```
+
+### Implementación del Job Scheduler
+
+```typescript
+export class SimpleJobScheduler {
+  private jobs: Map<string, Job> = new Map();
+  private isRunning = false;
+
+  addJob(name: string, job: Job): void {
+    this.jobs.set(name, job);
+  }
+
+  async start(): Promise<void> {
+    if (this.isRunning) return;
+    
+    this.isRunning = true;
+    
+    while (this.isRunning) {
+      for (const [name, job] of this.jobs) {
+        if (job.shouldRun()) {
+          try {
+            await job.execute();
+            job.updateLastRun();
+          } catch (error) {
+            console.error(`Error ejecutando job ${name}:`, error);
+          }
+        }
+      }
+      
+      // Esperar antes de la siguiente iteración
+      await new Promise(resolve => setTimeout(resolve, 60000)); // 1 minuto
+    }
+  }
+
+  stop(): void {
+    this.isRunning = false;
+  }
+}
+```
+
+---
+
+## 🖼️ Gestión de Imágenes
+
+### Arquitectura de BLOB Storage
+
+```mermaid
+graph TB
+    subgraph "Upload Process"
+        File[File Upload]
+        Validation[File Validation]
+        Processing[Image Processing]
+        Storage[BLOB Storage]
+    end
+    
+    subgraph "Serving Process"
+        Request[Image Request]
+        Cache[Cache Check]
+        Database[BLOB Retrieval]
+        Response[Image Response]
+    end
+    
+    subgraph "Optimization"
+        Compression[Image Compression]
+        Formats[Format Conversion]
+        Thumbnails[Thumbnail Generation]
+    end
+    
+    File --> Validation
+    Validation --> Processing
+    Processing --> Storage
+    Request --> Cache
+    Cache --> Database
+    Database --> Response
+    Processing --> Optimization
+```
+
+### Implementación de Optimización
+
+```typescript
+export class ImageOptimizer {
+  async optimizeImage(buffer: Buffer, options: OptimizationOptions): Promise<Buffer> {
+    // Redimensionar imagen
+    const resized = await this.resize(buffer, options.width, options.height);
+    
+    // Comprimir imagen
+    const compressed = await this.compress(resized, options.quality);
+    
+    // Convertir formato si es necesario
+    if (options.format) {
+      return await this.convertFormat(compressed, options.format);
+    }
+    
+    return compressed;
+  }
+
+  private async resize(buffer: Buffer, width: number, height: number): Promise<Buffer> {
+    // Implementación de redimensionamiento
+  }
+
+  private async compress(buffer: Buffer, quality: number): Promise<Buffer> {
+    // Implementación de compresión
+  }
+}
+```
+
+---
+
+## 🗄️ Modelo de Datos
+
+### Esquema de Base de Datos
+
+```mermaid
+erDiagram
+    User {
+        string id PK
+        string name
+        string email UK
+        string password
+        enum role
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    Product {
+        string id PK
+        string name
+        text description
+        float price
+        string category
+        string categoryId FK
+        int stock
+        boolean isActive
+        boolean featured
+        string materials
+        string dimensions
+        string weight
+        string careInstructions
+        string createdBy FK
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    Category {
+        string id PK
+        string name UK
+        string slug UK
+        string icon
+        text description
+        boolean isActive
+        boolean isCustom
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    ProductImage {
+        string id PK
+        string productId FK
+        string url
+        string altText
+        boolean isMain
+        int order
+        bytes imageData
+        string mimeType
+        string filename
+        int fileSize
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    ProductClick {
+        string id PK
+        string productId FK
+        string userAgent
+        string ipAddress
+        string referrer
+        string clickType
+        int year
+        int month
+        int week
+        int day
+        int hour
+        datetime createdAt
+    }
+    
+    PopularityMetric {
+        string id PK
+        string productId FK UK
+        int totalClicks
+        int weeklyClicks
+        int monthlyClicks
+        int yearlyClicks
+        int viewClicks
+        int whatsappClicks
+        int favoriteClicks
+        float popularityScore
+        float featuredScore
+        boolean isFeatured
+        boolean isPopular
+        datetime lastCalculated
+        datetime updatedAt
+    }
+    
+    User ||--o{ Product : creates
+    Product ||--o{ ProductImage : has
+    Product ||--o{ ProductClick : tracks
+    Product ||--o| PopularityMetric : has
+    Category ||--o{ Product : categorizes
+```
+
+### Relaciones y Restricciones
+
+#### Relaciones Principales
+- **User → Product**: Un usuario puede crear múltiples productos (1:N)
+- **Product → Category**: Un producto pertenece a una categoría (N:1)
+- **Product → ProductImage**: Un producto puede tener múltiples imágenes (1:N)
+- **Product → ProductClick**: Un producto puede tener múltiples clicks (1:N)
+- **Product → PopularityMetric**: Un producto tiene una métrica de popularidad (1:1)
+
+#### Restricciones de Integridad
+- **Foreign Keys**: Todas las relaciones están protegidas con FK
+- **Unique Constraints**: Email de usuario, slug de categoría
+- **Cascade Deletes**: Eliminación en cascada para imágenes y clicks
+- **Soft Deletes**: Productos se marcan como inactivos en lugar de eliminar
+
+---
+
+## 🔄 Flujos de Datos
+
+### Flujo de Creación de Producto
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant API
+    participant Validator
+    participant UseCase
+    participant Repository
+    participant Database
+    
+    Admin->>API: POST /api/products
+    API->>Validator: Validar datos de entrada
+    Validator-->>API: Datos válidos
+    API->>UseCase: Crear producto
+    UseCase->>Repository: Guardar en BD
+    Repository->>Database: INSERT
+    Database-->>Repository: Producto creado
+    Repository-->>UseCase: Producto
+    UseCase-->>API: Respuesta
+    API-->>Admin: Producto creado
+```
+
+### Flujo de Tracking de Popularidad
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API
+    participant Tracker
+    participant Database
+    
+    User->>Frontend: Click en producto
+    Frontend->>API: POST /api/products/[id]/track
+    API->>Tracker: Registrar interacción
+    Tracker->>Database: INSERT click
+    Tracker->>Database: UPDATE métricas
+    Database-->>Tracker: Confirmación
+    Tracker-->>API: Interacción registrada
+    API-->>Frontend: Respuesta
+    Frontend-->>User: Feedback visual
+```
+
+---
+
+## 🚀 Estrategias de Escalabilidad
+
+### Escalabilidad Horizontal
+
+#### Load Balancing
+```typescript
+// Configuración para múltiples instancias
+export const serverConfig = {
+  port: process.env.PORT || 3000,
+  hostname: '0.0.0.0',
+  maxConnections: 1000,
+  keepAlive: true,
+  keepAliveTimeout: 5000
+};
+```
+
+#### Database Sharding
+```typescript
+// Estrategia de sharding por categoría
+export class ShardedProductRepository {
+  private getShard(category: string): string {
+    const shards = ['shard1', 'shard2', 'shard3'];
+    const hash = this.hashString(category);
+    return shards[hash % shards.length];
+  }
+
+  private hashString(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+  }
+}
+```
+
+### Escalabilidad Vertical
+
+#### Connection Pooling
+```typescript
+// Configuración de pool de conexiones
+export const databaseConfig = {
+  pool: {
+    min: 2,
+    max: 20,
+    acquireTimeoutMillis: 30000,
+    createTimeoutMillis: 30000,
+    destroyTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
+    reapIntervalMillis: 1000,
+    createRetryIntervalMillis: 200
+  }
+};
+```
+
+#### Caching Strategy
+```typescript
+// Sistema de cache en múltiples niveles
+export class CacheManager {
+  private memoryCache = new Map<string, any>();
+  private redisCache: Redis;
+
+  async get(key: string): Promise<any> {
+    // 1. Check memory cache
+    if (this.memoryCache.has(key)) {
+      return this.memoryCache.get(key);
+    }
+
+    // 2. Check Redis cache
+    const redisValue = await this.redisCache.get(key);
+    if (redisValue) {
+      this.memoryCache.set(key, redisValue);
+      return redisValue;
+    }
+
+    // 3. Fetch from database
+    return null;
+  }
+
+  async set(key: string, value: any, ttl: number = 3600): Promise<void> {
+    this.memoryCache.set(key, value);
+    await this.redisCache.setex(key, ttl, JSON.stringify(value));
+  }
+}
+```
+
+---
+
+## 🔒 Seguridad y Compliance
+
+### Estrategias de Seguridad
+
+#### Autenticación Multi-Factor
+```typescript
+export class SecurityManager {
+  async validateRequest(req: Request): Promise<SecurityResult> {
+    // 1. Verificar JWT token
+    const token = this.extractToken(req);
+    if (!token) {
+      return { valid: false, reason: 'No token provided' };
+    }
+
+    // 2. Verificar expiración
+    if (this.isTokenExpired(token)) {
+      return { valid: false, reason: 'Token expired' };
+    }
+
+    // 3. Verificar permisos
+    const permissions = this.extractPermissions(token);
+    if (!this.hasRequiredPermissions(permissions, req.path)) {
+      return { valid: false, reason: 'Insufficient permissions' };
+    }
+
+    return { valid: true, permissions };
+  }
+}
+```
+
+#### Rate Limiting
+```typescript
+export class RateLimiter {
+  private requests = new Map<string, RequestCount[]>();
+
+  async checkLimit(identifier: string, limit: number, window: number): Promise<boolean> {
+    const now = Date.now();
+    const userRequests = this.requests.get(identifier) || [];
+    
+    // Limpiar requests antiguos
+    const validRequests = userRequests.filter(
+      req => now - req.timestamp < window
+    );
+    
+    if (validRequests.length >= limit) {
+      return false;
+    }
+    
+    // Agregar nuevo request
+    validRequests.push({ timestamp: now });
+    this.requests.set(identifier, validRequests);
+    
+    return true;
+  }
+}
+```
+
+### Compliance y Auditoría
+
+#### Logging de Auditoría
+```typescript
+export class AuditLogger {
+  async logAction(action: AuditAction): Promise<void> {
+    const auditLog = {
+      id: generateUUID(),
+      userId: action.userId,
+      action: action.type,
+      resource: action.resource,
+      details: action.details,
+      ipAddress: action.ipAddress,
+      userAgent: action.userAgent,
+      timestamp: new Date(),
+      metadata: action.metadata
+    };
+
+    await this.auditRepository.create(auditLog);
+  }
+}
+```
+
+---
+
+## 📊 Monitoreo y Observabilidad
+
+### Métricas de Performance
+
+#### Health Checks
+```typescript
+export class HealthChecker {
+  async checkHealth(): Promise<HealthStatus> {
+    const checks = await Promise.all([
+      this.checkDatabase(),
+      this.checkRedis(),
+      this.checkExternalServices()
+    ]);
+
+    const allHealthy = checks.every(check => check.healthy);
+    
+    return {
+      status: allHealthy ? 'healthy' : 'unhealthy',
+      timestamp: new Date(),
+      checks,
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      cpu: process.cpuUsage()
+    };
+  }
+}
+```
+
+#### Performance Monitoring
+```typescript
+export class PerformanceMonitor {
+  private metrics = new Map<string, Metric[]>();
+
+  recordMetric(name: string, value: number, tags: Record<string, string> = {}): void {
+    const metric: Metric = {
+      name,
+      value,
+      tags,
+      timestamp: Date.now()
+    };
+
+    if (!this.metrics.has(name)) {
+      this.metrics.set(name, []);
+    }
+
+    this.metrics.get(name)!.push(metric);
+  }
+
+  getMetrics(name: string, timeRange: TimeRange): Metric[] {
+    const metrics = this.metrics.get(name) || [];
+    const startTime = Date.now() - timeRange;
+    
+    return metrics.filter(m => m.timestamp >= startTime);
+  }
+}
+```
+
+---
+
+## 🎯 Roadmap de Arquitectura
+
+### Mejoras Planificadas
+
+#### Corto Plazo (3-6 meses)
+- [ ] **API GraphQL**: Implementar GraphQL para consultas complejas
+- [ ] **Webhooks**: Sistema de notificaciones en tiempo real
+- [ ] **Rate Limiting**: Implementar límites de velocidad por usuario
+- [ ] **Caching Redis**: Migrar a Redis para mejor performance
+
+#### Mediano Plazo (6-12 meses)
+- [ ] **Microservicios**: Separar en servicios independientes
+- [ ] **Event Sourcing**: Sistema de auditoría completo
+- [ ] **CQRS**: Separación de lecturas y escrituras
+- [ ] **Message Queue**: Sistema de colas para jobs pesados
+
+#### Largo Plazo (12+ meses)
+- [ ] **Kubernetes**: Orquestación de contenedores
+- [ ] **Service Mesh**: Comunicación entre servicios
+- [ ] **Multi-tenancy**: Soporte para múltiples tiendas
+- [ ] **Machine Learning**: Recomendaciones inteligentes
+
+---
+
+## 📚 Recursos Adicionales
+
+### Documentación Relacionada
+- [README Principal](../README.md) - Visión general del proyecto
+- [Guía del Desarrollador](../DEVELOPER_GUIDE.md) - Guía técnica completa
+- [Referencia de la API](../API_REFERENCE.md) - Documentación de endpoints
+
+### Herramientas y Tecnologías
+- **Next.js 15**: Framework de React con App Router
+- **Prisma**: ORM moderno para TypeScript
+- **PostgreSQL**: Base de datos relacional robusta
+- **NextAuth.js**: Sistema de autenticación completo
+
+---
+
+## 🎉 Conclusión
+
+La arquitectura de Solecito Crochet está diseñada para ser robusta, escalable y mantenible. Con principios de Clean Architecture, patrones de diseño probados y tecnologías modernas, el sistema está preparado para crecer y evolucionar según las necesidades del negocio.
+
+### Puntos Clave
+- **Arquitectura Limpia**: Separación clara de responsabilidades
+- **Escalabilidad**: Preparado para crecimiento horizontal y vertical
+- **Seguridad**: Múltiples capas de protección
+- **Performance**: Optimización desde el diseño inicial
+- **Mantenibilidad**: Código limpio y bien estructurado
+
+---
+
+*Arquitectura del Sistema - Solecito Crochet v1.0.0*
+
+**Última actualización**: Diciembre 2024  
+**Versión**: 1.0.0  
+**Estado**: ✅ **PRODUCCIÓN READY**
