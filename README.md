@@ -29,48 +29,287 @@
 - **Almacenamiento de imágenes** BLOB optimizado
 - **TypeScript** para tipado fuerte y mejor DX
 
-## 📦 Instalación
+## 📦 Instalación y Configuración
 
-### Prerrequisitos
-- **Node.js** >= 18.0.0
-- **PostgreSQL** >= 15
+### 🎯 Prerrequisitos
 
-### Instalación Rápida
+#### **Sistema Operativo**
+- **Windows 10/11** ✅ (Probado en Windows 10.0.19045)
+- **macOS 10.15+** ✅
+- **Ubuntu 20.04+** ✅
+- **WSL2** ✅ (Recomendado para Windows)
+
+#### **Software Requerido**
+- **Node.js** >= 18.0.0 ([Descargar aquí](https://nodejs.org/))
+- **PostgreSQL** >= 15 ([Descargar aquí](https://www.postgresql.org/download/))
+- **Git** ([Descargar aquí](https://git-scm.com/))
+
+#### **Verificar Instalaciones**
+```bash
+# Verificar Node.js
+node --version
+npm --version
+
+# Verificar PostgreSQL
+psql --version
+
+# Verificar Git
+git --version
+```
+
+---
+
+## 🗄️ **CONFIGURACIÓN DE BASE DE DATOS - PASO A PASO**
+
+### **PASO 1: Instalar PostgreSQL**
+
+#### **Windows**
+1. **Descargar PostgreSQL** desde [postgresql.org](https://www.postgresql.org/download/windows/)
+2. **Ejecutar instalador** como administrador
+3. **Configurar contraseña** para usuario `postgres` (¡GUÁRDALA!)
+4. **Puerto por defecto**: 5432
+5. **Instalar pgAdmin** (opcional pero recomendado)
+
+#### **macOS**
+```bash
+# Con Homebrew
+brew install postgresql@15
+brew services start postgresql@15
+
+# O descargar desde postgresql.org
+```
+
+#### **Ubuntu/Debian**
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+### **PASO 2: Crear Base de Datos**
+
+#### **Opción A: Con pgAdmin (Recomendado para principiantes)**
+1. **Abrir pgAdmin**
+2. **Conectar al servidor** (localhost:5432)
+3. **Click derecho en "Databases"** → "Create" → "Database"
+4. **Nombre**: `solecito_crochet`
+5. **Owner**: `postgres`
+6. **Click "Save"**
+
+#### **Opción B: Con línea de comandos**
+```bash
+# Conectar como usuario postgres
+psql -U postgres -h localhost
+
+# Crear base de datos
+CREATE DATABASE solecito_crochet;
+
+# Verificar que se creó
+\l
+
+# Salir
+\q
+```
+
+#### **Opción C: Con createdb (más rápido)**
+```bash
+# Windows (desde Git Bash o WSL)
+createdb -U postgres -h localhost solecito_crochet
+
+# macOS/Linux
+createdb solecito_crochet
+```
+
+### **PASO 3: Configurar Variables de Entorno**
+
+#### **Crear archivo `.env.local`**
+```bash
+# En la raíz del proyecto
+touch .env.local
+```
+
+#### **Contenido del archivo `.env.local`**
+```env
+# Base de datos PostgreSQL
+DATABASE_URL="postgresql://postgres:TU_CONTRASEÑA@localhost:5432/solecito_crochet"
+
+# NextAuth.js
+NEXTAUTH_SECRET="tu_secret_super_seguro_aqui_minimo_32_caracteres"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Variables opcionales
+NODE_ENV="development"
+```
+
+#### **⚠️ IMPORTANTE: Configurar NEXTAUTH_SECRET**
+```bash
+# Generar secret seguro (mínimo 32 caracteres)
+openssl rand -base64 32
+
+# O usar este generador online: https://generate-secret.vercel.app/32
+```
+
+### **PASO 4: Instalar Dependencias del Proyecto**
 
 ```bash
-# Clonar el repositorio
+# Clonar repositorio (si no lo has hecho)
 git clone https://github.com/your-username/solecito-crochet.git
 cd solecito-crochet
 
 # Instalar dependencias
 npm install
 
-# Configurar base de datos
+# Verificar instalación
+npm list --depth=0
+```
+
+### **PASO 5: Configurar Prisma y Base de Datos**
+
+```bash
+# Generar cliente de Prisma
 npx prisma generate
+
+# Verificar conexión a la base de datos
+npx prisma db pull
+
+# Crear tablas en la base de datos
 npx prisma db push
 
-# Ejecutar en desarrollo
+# (Opcional) Ver base de datos en Prisma Studio
+npx prisma studio
+```
+
+### **PASO 6: Verificar Instalación**
+
+```bash
+# Verificar que todo funciona
+npm run build
+
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-## 🔧 Inicio Rápido
+---
 
-### 1. Configurar Base de Datos
+## 🔧 **SOLUCIÓN DE PROBLEMAS COMUNES**
+
+### **❌ Error: "Connection refused"**
 ```bash
-createdb solecito_crochet
-npx prisma db push
+# Verificar que PostgreSQL esté corriendo
+# Windows: Servicios → PostgreSQL
+# macOS: brew services list
+# Linux: sudo systemctl status postgresql
+
+# Reiniciar PostgreSQL
+# Windows: Servicios → PostgreSQL → Restart
+# macOS: brew services restart postgresql
+# Linux: sudo systemctl restart postgresql
 ```
 
-### 2. Iniciar Servidor
+### **❌ Error: "Authentication failed"**
+```bash
+# Verificar contraseña en .env.local
+# Verificar usuario en DATABASE_URL
+# Probar conexión manual:
+psql -U postgres -h localhost -d solecito_crochet
+```
+
+### **❌ Error: "Database does not exist"**
+```bash
+# Crear base de datos manualmente
+createdb -U postgres -h localhost solecito_crochet
+
+# O con psql:
+psql -U postgres -h localhost
+CREATE DATABASE solecito_crochet;
+```
+
+### **❌ Error: "Prisma schema not found"**
+```bash
+# Verificar que estés en el directorio correcto
+pwd
+ls prisma/schema.prisma
+
+# Regenerar cliente de Prisma
+npx prisma generate
+```
+
+---
+
+## 🚀 **INICIO RÁPIDO (Después de la configuración)**
+
+### **1. Iniciar Servidor**
 ```bash
 npm run dev
 ```
 
-### 3. Primer Request
+### **2. Verificar API**
 ```bash
-# Obtener productos
+# Probar endpoint de productos
 curl http://localhost:3000/api/products
+
+# Probar endpoint de categorías
+curl http://localhost:3000/api/categories
 ```
+
+### **3. Acceder a Prisma Studio**
+```bash
+npx prisma studio
+# Abre http://localhost:5555 en tu navegador
+```
+
+---
+
+## 📊 **ESTRUCTURA DE LA BASE DE DATOS**
+
+### **Tablas Principales**
+- **`User`** - Usuarios del sistema (CLIENTE, ADMIN, SUPERADMIN)
+- **`Product`** - Productos de crochet
+- **`Category`** - Categorías de productos
+- **`ProductImage`** - Imágenes de productos (BLOB)
+- **`ProductClick`** - Tracking de interacciones
+- **`PopularityMetric`** - Métricas de popularidad
+
+### **Relaciones Clave**
+```
+User (1) ←→ (N) Product
+Product (1) ←→ (N) ProductImage
+Product (N) ←→ (1) Category
+Product (1) ←→ (1) PopularityMetric
+```
+
+---
+
+## 🔐 **CONFIGURACIÓN DE AUTENTICACIÓN**
+
+### **Crear Usuario Administrador Inicial**
+```bash
+# Conectar a la base de datos
+psql -U postgres -h localhost -d solecito_crochet
+
+# Insertar usuario admin (reemplaza con tus datos)
+INSERT INTO "User" (id, name, email, password, role, "createdAt", "updatedAt") 
+VALUES (
+  gen_random_uuid(),
+  'Administrador',
+  'admin@solecitocrochet.com',
+  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3bp.gS.Oe', -- password: admin123
+  'SUPERADMIN',
+  NOW(),
+  NOW()
+);
+
+# Verificar inserción
+SELECT id, name, email, role FROM "User";
+```
+
+### **Credenciales por Defecto**
+- **Email**: `admin@solecitocrochet.com`
+- **Contraseña**: `admin123`
+- **Rol**: `SUPERADMIN`
+
+---
 
 ## 📚 Documentación
 
