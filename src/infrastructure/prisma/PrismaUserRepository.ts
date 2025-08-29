@@ -1,5 +1,5 @@
 import { PrismaClient, UserRole } from "@prisma/client";
-import { IUserRepository } from "../../domain/interfaces/IUserRepository";
+import { IUserRepository, UserWithId } from "../../domain/interfaces/IUserRepository";
 import { User } from "../../domain/entities/User";
 
 const prisma = new PrismaClient();
@@ -16,7 +16,8 @@ export class PrismaUserRepository implements IUserRepository {
         )
       : null;
   }
-  async create(user: User) {
+  
+  async create(user: User): Promise<UserWithId> {
     const created = await prisma.user.create({
       data: {
         name: user.name,
@@ -25,11 +26,16 @@ export class PrismaUserRepository implements IUserRepository {
         role: user.role as UserRole,
       },
     });
-    return new User(
-      created.name ?? "",
-      created.email ?? "",
-      created.password ?? "",
-      created.role ?? "cliente"
-    );
+    
+    // Devolver el usuario completo con id desde la base de datos
+    return {
+      id: created.id,
+      name: created.name,
+      email: created.email,
+      password: created.password,
+      role: created.role,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt
+    };
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useUserRole, UserRole } from '@/hooks/useUserRole';
+import UserRegistrationForm from '@/components/admin/UserRegistrationForm';
 
 export default function UsersManagementPage() {
   const { isLoading, hasAdminAccess, userRole, isSuperAdmin } = useUserRole();
@@ -41,179 +42,154 @@ export default function UsersManagementPage() {
     {
       name: 'CLIENTE',
       icon: '👤',
-      color: 'green',
-      description: 'Usuario estándar',
-      permissions: [
-        'Ver catálogo de productos',
-        'Agregar productos a favoritos',
-        'Contactar por WhatsApp',
-        'Ver detalles de productos'
-      ]
+      description: 'Usuarios estándar que pueden ver productos y hacer pedidos',
+      permissions: ['Ver productos', 'Hacer pedidos', 'Gestionar perfil'],
+      color: 'bg-blue-100 text-blue-800'
     },
     {
       name: 'ADMIN',
-      icon: '⚡',
-      color: 'blue',
-      description: 'Administrador',
-      permissions: [
-        'Todos los permisos de CLIENTE',
-        'Crear y editar productos',
-        'Ver analíticas y reportes',
-        'Gestionar inventario',
-        'Acceso al dashboard de administración'
-      ]
+      icon: '👨‍💼',
+      description: 'Administradores con acceso completo al dashboard',
+      permissions: ['CRUD de productos', 'Gestión de categorías', 'Métricas y estadísticas', 'Gestión de usuarios'],
+      color: 'bg-green-100 text-green-800'
     },
     {
       name: 'SUPERADMIN',
       icon: '👑',
-      color: 'purple',
-      description: 'Super Administrador',
-      permissions: [
-        'Todos los permisos de ADMIN',
-        'Gestionar usuarios y roles',
-        'Configuración del sistema',
-        'Acceso completo a la base de datos',
-        'Configurar integraciones'
-      ]
+      description: 'Super administradores con acceso total al sistema',
+      permissions: ['Todo lo de ADMIN', 'Configuración del sistema', 'Gestión de roles', 'Backups y mantenimiento'],
+      color: 'bg-purple-100 text-purple-800'
     }
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Gestión de Usuarios 👥
+          Gestión de Usuarios
         </h1>
-        <p className="text-gray-900">
-          Información sobre roles y permisos en Solecito Crochet
+        <p className="text-gray-600">
+          Administra roles y permisos de los usuarios del sistema
         </p>
       </div>
 
-      {/* Current User Info */}
-      <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-6 mb-8">
-        <div className="flex items-center space-x-3 mb-4">
-          <span className="text-2xl">
-            {userRole === UserRole.SUPERADMIN ? '👑' : userRole === UserRole.ADMIN ? '⚡' : '👤'}
-          </span>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">Tu Rol Actual</h3>
-            <p className="text-sm text-gray-900">
-              Rol: <span className="font-medium text-pink-600">{userRole}</span>
-            </p>
-          </div>
+      {/* Formulario de Registro */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Registrar Nuevo Usuario
+        </h2>
+        <UserRegistrationForm />
+      </div>
+
+      {/* Información de Roles */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Roles y Permisos del Sistema
+        </h2>
+        
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+          {roles.map((role) => (
+            <div key={role.name} className="border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <span className="text-3xl mr-3">{role.icon}</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {role.name}
+                  </h3>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${role.color}`}>
+                    {role.name}
+                  </span>
+                </div>
+              </div>
+              
+              <p className="text-gray-600 mb-4">
+                {role.description}
+              </p>
+              
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  Permisos:
+                </h4>
+                <ul className="space-y-1">
+                  {role.permissions.map((permission, index) => (
+                    <li key={index} className="flex items-center text-sm text-gray-600">
+                      <span className="text-green-500 mr-2">✓</span>
+                      {permission}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center space-x-2">
-            <span className={hasAdminAccess ? 'text-green-600' : 'text-gray-900'}>
-              {hasAdminAccess ? '✅' : '❌'}
-            </span>
-            <span>Acceso de Administrador</span>
+      </div>
+
+      {/* Estadísticas de Usuarios */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Estadísticas de Usuarios
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <span className="text-2xl">👤</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-blue-600">Total Clientes</p>
+                <p className="text-2xl font-bold text-blue-900">--</p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className={isSuperAdmin ? 'text-green-600' : 'text-gray-900'}>
-              {isSuperAdmin ? '✅' : '❌'}
-            </span>
-            <span>Acceso de Super Admin</span>
+          
+          <div className="bg-green-50 p-4 rounded-lg">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <span className="text-2xl">👨‍💼</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-green-600">Administradores</p>
+                <p className="text-2xl font-bold text-green-900">--</p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-green-600">✅</span>
-            <span>Autenticado</span>
+          
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <span className="text-2xl">👑</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-purple-600">Super Admins</p>
+                <p className="text-2xl font-bold text-purple-900">--</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Roles Information */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {roles.map((role) => (
-          <div 
-            key={role.name}
-            className={`bg-white rounded-lg border shadow-lg overflow-hidden ${
-              userRole === role.name ? 'border-pink-300 ring-2 ring-pink-200' : 'border-gray-200'
-            }`}
-          >
-            {/* Header */}
-            <div className={`p-4 ${
-              role.color === 'green' ? 'bg-green-50' :
-              role.color === 'blue' ? 'bg-blue-50' :
-              'bg-purple-50'
-            }`}>
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">{role.icon}</span>
-                <div>
-                  <h3 className={`text-lg font-semibold ${
-                    role.color === 'green' ? 'text-green-900' :
-                    role.color === 'blue' ? 'text-blue-900' :
-                    'text-purple-900'
-                  }`}>
-                    {role.name}
-                  </h3>
-                  <p className={`text-sm ${
-                    role.color === 'green' ? 'text-green-700' :
-                    role.color === 'blue' ? 'text-blue-700' :
-                    'text-purple-700'
-                  }`}>
-                    {role.description}
-                  </p>
-                </div>
-              </div>
-              {userRole === role.name && (
-                <div className="mt-2">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                    Tu rol actual
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Permissions */}
-            <div className="p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Permisos:</h4>
-              <ul className="space-y-2">
-                {role.permissions.map((permission, index) => (
-                  <li key={index} className="flex items-start space-x-2 text-sm">
-                    <span className={`mt-1 ${
-                      role.color === 'green' ? 'text-green-500' :
-                      role.color === 'blue' ? 'text-blue-500' :
-                      'text-purple-500'
-                    }`}>
-                      •
-                    </span>
-                    <span className="text-gray-900">{permission}</span>
-                  </li>
-                ))}
+      {/* Notas de Seguridad */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-yellow-800">
+              Notas de Seguridad
+            </h3>
+            <div className="mt-2 text-sm text-yellow-700">
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Solo los administradores pueden registrar nuevos usuarios</li>
+                <li>Los roles ADMIN y SUPERADMIN tienen acceso completo al sistema</li>
+                <li>Se recomienda cambiar contraseñas regularmente</li>
+                <li>Monitorea los accesos y actividades sospechosas</li>
               </ul>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Admin Tools */}
-      {isSuperAdmin && (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6">
-          <div className="flex items-center space-x-3 mb-4">
-            <span className="text-2xl">👑</span>
-            <h3 className="text-lg font-semibold text-gray-900">Herramientas de Super Admin</h3>
-          </div>
-          <p className="text-gray-900 mb-4">
-            Como Super Administrador, tienes acceso a herramientas avanzadas de gestión
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
-              <span className="text-xl">👥</span>
-              <span className="font-medium text-gray-900">Gestionar Roles</span>
-            </button>
-            <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
-              <span className="text-xl">⚙️</span>
-              <span className="font-medium text-gray-900">Configuración Sistema</span>
-            </button>
-            <button className="flex items-center space-x-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
-              <span className="text-xl">📊</span>
-              <span className="font-medium text-gray-900">Analíticas Avanzadas</span>
-            </button>
-          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 } 
